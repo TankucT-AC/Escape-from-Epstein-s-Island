@@ -1,30 +1,27 @@
 #ifndef BULLET_HPP
 #define BULLET_HPP
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <memory>
+#include "Entity.hpp"
+#include "config.hpp"
 
-class Bullet
+class Bullet : public Entity
 {
 private:
-    std::unique_ptr<sf::Sprite> sprite;
-
     float lifetime;
-    float speed;
     sf::Vector2<float> direction;
     bool dead;
 public:
-    Bullet(const sf::Texture& texture, 
-        const sf::Vector2<float>& startPos, 
-        const sf::Vector2<float>& dir);
+    Bullet(const sf::Texture& InitTexture, 
+        const sf::Vector2<float>& InitStartPos, 
+        const sf::Vector2<float>& InitDirection,
+        float InitSpeed = config::BULLET_DEFAULT_SPEED,
+        float InitLifetime = config::BULLET_DEFAULT_LIFETIME
+    );
 
-    void update(const sf::Time& dt);
-    void draw(sf::RenderWindow& window);
+    virtual void update(const sf::Time& dt, sf::RenderWindow& window) override;
+    virtual void draw(sf::RenderWindow& window) override;
+    virtual void move(const sf::Vector2<float>& offset) override;
+    virtual sf::Vector2<float> getPosition() const override;
 
     int getLifetime() const;
     bool isBulletAlive() const;

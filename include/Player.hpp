@@ -2,6 +2,7 @@
 #define PLAYER_HPP
 
 #include "Entity.hpp"
+#include "config.hpp"
 
 class Player : public Entity
 {
@@ -9,7 +10,10 @@ private:
     float ShootTime;
     float ShootDelay;
 public:
-    Player(const sf::Texture& InitTexture, float InitSpeed = 300.f);
+    Player(const sf::Texture& InitTexture, 
+        float InitSpeed = config::PLAYER_DEFAULT_SPEED, 
+        float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY
+    );
 
     virtual void move(const sf::Vector2<float>& offset) override;
     virtual void update(const sf::Time& dt, sf::RenderWindow& window) override;

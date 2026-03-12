@@ -54,7 +54,7 @@ void Engine::update(const sf::Time& dt)
     player.moveShootTime(dt);
     for (const auto& bullet : bullets)
     {
-        bullet->update(dt);
+        bullet->update(dt, *EngineWindow);
     }
     // Удаляем пули, срок жизни которых закончился
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(), 

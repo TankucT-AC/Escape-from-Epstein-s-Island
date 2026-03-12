@@ -5,6 +5,7 @@
 
 namespace config
 {
+    // Параметры для игрового окна
     static const int GAMEBOARD_HEIGHT       = 800;
     static const int GAMEBOARD_WIDTH        = 1200;
     static const std::string GAMEBOARD_NAME = "gameboard";
@@ -16,6 +17,18 @@ namespace config
     static const std::string PLAYER_TEXTURE = TEXTURE_PATH + "player.png";
     static const std::string BULLET_PLAYER_TEXTURE = 
                                        TEXTURE_PATH + "player_bullet.png";
+
+    /*
+        ХАРАКТЕРИСТИКИ ДЛЯ КЛАССОВ
+    */
+
+    // Bullet
+    static const float BULLET_DEFAULT_LIFETIME = 2.f;
+    static const float BULLET_DEFAULT_SPEED =  200.f;
+
+    // Player
+    static const float PLAYER_DEFAULT_SPEED =      300.f;
+    static const float PLAYER_DEFAULT_SHOOT_DELAY = 0.4f;
 }
 
 #endif

@@ -1,33 +1,40 @@
 #include "Bullet.hpp"
 #include <cmath>
-#include <memory>
 
-Bullet::Bullet(const sf::Texture& texture, 
-    const sf::Vector2<float>& startPos, 
-    const sf::Vector2<float>& dir) : direction(dir)
+
+Bullet::Bullet(const sf::Texture& InitTexture, 
+    const sf::Vector2<float>& InitStartPos, 
+    const sf::Vector2<float>& InitDirection,
+    float InitSpeed,
+    float InitLifetime) : Entity(InitTexture, InitSpeed), direction(InitDirection),
+    lifetime(InitLifetime), dead(false)
 {
-    sprite = std::make_unique<sf::Sprite>(texture);
-    sf::FloatRect b = sprite->getLocalBounds();
-    sprite->setOrigin(b.width / 2.f, b.height / 2.f);
-    sprite->setPosition(startPos);
-
-    speed = 200.f;
-    lifetime = 2.f;
-    dead = false;
+    sf::FloatRect b = sprite.getLocalBounds();
+    sprite.setOrigin(b.width / 2.f, b.height / 2.f);
+    sprite.setPosition(InitStartPos);
 }
 
-void Bullet::update(const sf::Time& dt)
+void Bullet::update(const sf::Time& dt, sf::RenderWindow& window)
 {
-    sprite->move(direction * dt.asSeconds() * speed);
+    sprite.move(direction * dt.asSeconds() * speed);
 
     lifetime -= dt.asSeconds();
-    if (lifetime <= 0) dead = true;
+    if (lifetime <= 0) 
+    {
+        dead = true;
+        lifetime = 0;
+    }
 }
 
 void Bullet::draw(sf::RenderWindow& window)
 {
-    window.draw(*sprite);
+    window.draw(sprite);
 }
+
+// Т.к. пуля всегда перемещается по заданной прямой, то мувать ее не надо
+void Bullet::move(const sf::Vector2<float>& offset) {}
+
+sf::Vector2<float> Bullet::getPosition() const { return sprite.getPosition(); }
 
 int Bullet::getLifetime() const { return lifetime; }
 bool Bullet::isBulletAlive() const { return !dead; }

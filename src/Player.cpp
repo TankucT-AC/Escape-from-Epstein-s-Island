@@ -3,12 +3,13 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-Player::Player(const sf::Texture& InitTexture, float InitSpeed) : Entity(InitTexture, InitSpeed)
+Player::Player(const sf::Texture& InitTexture, 
+    float InitSpeed,
+    float InitShootDelay) : Entity(InitTexture, InitSpeed), ShootTime(0.f),
+    ShootDelay(InitShootDelay)
 {
     auto bounds = sprite.getLocalBounds();
     sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    ShootTime = 0.f;
-    ShootDelay = 0.2f;
 }
 
 void Player::move(const sf::Vector2<float>& offset)

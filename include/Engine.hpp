@@ -14,6 +14,7 @@
 #include <vector>
 #include "Player.hpp"
 #include "Bullet.hpp"
+#include "Enemy.hpp"
 #include "ResourceManager.hpp"
 
 class Engine
@@ -26,6 +27,7 @@ private:
     sf::View EngineCamera;
     ResourceManager resourceManager;
     Player player;
+    std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<std::unique_ptr<Bullet>> bullets;
 
     // КОСТЫЛЬ ДЛЯ ТЕСТА

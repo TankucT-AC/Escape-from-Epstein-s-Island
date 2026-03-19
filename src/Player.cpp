@@ -12,9 +12,9 @@ Player::Player(const sf::Texture& InitTexture,
     sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }
 
-void Player::move(const sf::Vector2<float>& offset)
+void Player::move(const sf::Time& dt, const sf::Vector2<float>& offset)
 {
-    sprite.move(offset);
+    sprite.move(dt.asSeconds() * offset);
 }
 
 void Player::draw(sf::RenderWindow& window)
@@ -31,7 +31,7 @@ void Player::update(const sf::Time& dt, sf::RenderWindow& window)
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) offset.x = -speed;
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) offset.x = speed;
 
-    sprite.move(offset * dt.asSeconds());
+    this->move(dt, offset);
 
     // вращение игрока в зависимости от позиции мышки
     sf::Vector2<int> mousePos = sf::Mouse::getPosition(window);

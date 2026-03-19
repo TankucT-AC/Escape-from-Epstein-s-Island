@@ -4,12 +4,15 @@
 #include <cmath>
 #include <memory>
 
-Engine::Engine() : player(resourceManager.getTexture(config::PLAYER_TEXTURE))
+Engine::Engine() : 
+player(resourceManager.getTexture(config::PLAYER_TEXTURE))
 {
     EngineVideoMode.height = config::GAMEBOARD_HEIGHT;
     EngineVideoMode.width  = config::GAMEBOARD_WIDTH;
     EngineWindow = std::make_unique<sf::RenderWindow>(EngineVideoMode, config::GAMEBOARD_NAME);
     EngineCamera.setCenter(player.getPosition());
+
+    enemies.push_back(std::make_unique<Enemy>(resourceManager.getTexture(config::ENEMY_TEXTURE)));
 
     // КОСТЫЛЬ
     board.setSize(sf::Vector2<float>{500.f, 500.f});
@@ -34,6 +37,11 @@ void Engine::render()
     // draw game loop
     EngineWindow->draw(board);
     player.draw(*EngineWindow);
+    for (const auto& enemy : enemies)
+    {
+        enemy->draw(*EngineWindow);
+    }
+        
     for (const auto& bullet : bullets)
     {
         bullet->draw(*EngineWindow);
@@ -56,6 +64,7 @@ void Engine::update(const sf::Time& dt)
     {
         bullet->update(dt, *EngineWindow);
     }
+
     // Удаляем пули, срок жизни которых закончился
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(), 
         [](const auto& bullet) 
@@ -63,6 +72,33 @@ void Engine::update(const sf::Time& dt)
             return !bullet->isBulletAlive(); 
         }), 
         bullets.end());
+    
+    // Наносим урон противнику
+    for (const auto& bullet : bullets)
+    {
+        if (!bullet->isBulletAlive()) continue;
+        for (const auto& enemy : enemies)
+        {
+            if (enemy->isBulletCollision(*bullet)) 
+            {
+                enemy->getReceivedDamage(bullet->getDamage());
+                bullet->setBulletAlive(false);
+            }
+        }
+        
+    }
+
+     enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
+        [](const auto& enemy) 
+        {   
+            return !enemy->isEnemyAlive(); 
+        }), 
+        enemies.end());
+    
+    for (const auto& enemy : enemies)
+    {
+        enemy->update(dt, player.getPosition(), *EngineWindow);
+    }
     
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player.isShootTime()) 
     {

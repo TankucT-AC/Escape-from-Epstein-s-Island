@@ -17,6 +17,7 @@ namespace config
     static const std::string PLAYER_TEXTURE = TEXTURE_PATH + "player.png";
     static const std::string BULLET_PLAYER_TEXTURE = 
                                        TEXTURE_PATH + "player_bullet.png";
+    static const std::string ENEMY_TEXTURE = TEXTURE_PATH +   "enemy.png";
 
     /*
         ХАРАКТЕРИСТИКИ ДЛЯ КЛАССОВ
@@ -25,10 +26,16 @@ namespace config
     // Bullet
     static const float BULLET_DEFAULT_LIFETIME = 2.f;
     static const float BULLET_DEFAULT_SPEED =  200.f;
+    static const float BULLET_DEFAULT_DAMAGE = 0.5f;
 
     // Player
     static const float PLAYER_DEFAULT_SPEED =      300.f;
     static const float PLAYER_DEFAULT_SHOOT_DELAY = 0.4f;
+    static const float PLAYER_DEFAULT_HEALTH =      10.f;
+
+    // Enemy
+    static const float ENEMY_DEFAULT_SPEED = 150.f;
+    static const float ENEMY_DEFAULT_HEALTH = 5.f;
 }
 
 #endif

@@ -13,6 +13,7 @@ set(SOURCES
     src/Engine.cpp
     src/Player.cpp
     src/Bullet.cpp
+    src/Enemy.cpp
 )
 
 set(HEADERS
@@ -22,6 +23,7 @@ set(HEADERS
     include/Bullet.hpp
     include/ResourceManager.hpp
     include/Entity.hpp
+    include/Enemy.hpp
 )
 
 add_executable(game ${SOURCES} ${HEADERS})

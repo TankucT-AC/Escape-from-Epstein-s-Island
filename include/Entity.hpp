@@ -16,10 +16,11 @@ protected:
     float speed;
 public:
     Entity(const sf::Texture& InitTexture, 
-        float InitSpeed) : sprite(InitTexture), speed(InitSpeed) {}
+        float InitSpeed) : 
+    sprite(InitTexture), speed(InitSpeed) {}
     virtual ~Entity() = default;
 
-    virtual void move(const sf::Vector2<float>& offset) = 0;
+    virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) = 0;
     virtual void update(const sf::Time& dt, sf::RenderWindow& window) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
     virtual sf::Vector2<float> getPosition() const = 0;

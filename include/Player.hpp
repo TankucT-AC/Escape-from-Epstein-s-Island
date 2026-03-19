@@ -15,7 +15,7 @@ public:
         float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY
     );
 
-    virtual void move(const sf::Vector2<float>& offset) override;
+    virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) override;
     virtual void update(const sf::Time& dt, sf::RenderWindow& window) override;
     virtual void draw(sf::RenderWindow& window) override;
 

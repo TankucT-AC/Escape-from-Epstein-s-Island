@@ -14,6 +14,8 @@ set(SOURCES
     src/Player.cpp
     src/Bullet.cpp
     src/Enemy.cpp
+    src/Room.cpp
+    src/Wall.cpp
 )
 
 set(HEADERS
@@ -24,11 +26,14 @@ set(HEADERS
     include/ResourceManager.hpp
     include/Entity.hpp
     include/Enemy.hpp
+    include/Room.hpp
+    include/UpdateContext.hpp
+    include/Wall.hpp
 )
 
 add_executable(game ${SOURCES} ${HEADERS})
 
-target_include_directories(game PRIVATE 
+target_include_directories(game PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 

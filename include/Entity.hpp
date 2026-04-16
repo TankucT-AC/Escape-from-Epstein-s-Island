@@ -7,6 +7,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
+#include "UpdateContext.hpp"
 
 // Абстракный класс для сущностей
 class Entity 
@@ -21,9 +22,11 @@ public:
     virtual ~Entity() = default;
 
     virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) = 0;
-    virtual void update(const sf::Time& dt, sf::RenderWindow& window) = 0;
+    virtual void update(const UpdateContext& ctx) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
-    virtual sf::Vector2<float> getPosition() const = 0;
+
+    virtual sf::Vector2<float> getPosition() const { return sprite.getPosition(); };
+    virtual sf::Rect<float> getHitbox() const { return sprite.getGlobalBounds(); };
 };
 
 #endif

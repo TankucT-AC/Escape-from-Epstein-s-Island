@@ -1,0 +1,25 @@
+#include "Wall.hpp"
+#include "config.hpp"
+
+Wall::Wall(const sf::Texture& InitTexture, sf::Vector2<float> InitPos) : 
+    Entity(InitTexture, 0.f) 
+{
+    float scale = config::TILE_SIZE / sprite.getLocalBounds().width;
+    sprite.setPosition(InitPos);
+    sprite.setScale({scale, scale});
+}
+
+void Wall::draw(sf::RenderWindow& window)
+{
+    window.draw(sprite);
+
+    #ifdef DEBUG_DRAW_COLLISIONS
+        sf::FloatRect hb = this->getHitbox();
+        sf::RectangleShape debugRect({hb.width, hb.height});
+        debugRect.setPosition(hb.left, hb.top);
+        debugRect.setFillColor(sf::Color::Transparent);
+        debugRect.setOutlineColor(sf::Color::Red);
+        debugRect.setOutlineThickness(1.f);
+        window.draw(debugRect);
+    #endif
+}

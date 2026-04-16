@@ -1,3 +1,6 @@
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
+
 #include "Bullet.hpp"
 #include "Entity.hpp"
 #include "config.hpp"
@@ -17,12 +20,13 @@ public:
     );
 
     virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) override;
-    virtual void update(const sf::Time& dt, sf::RenderWindow& window) override {};
+    virtual void update(const UpdateContext& ctx) override {};
     virtual void draw(sf::RenderWindow& window) override;
-    virtual sf::Vector2<float> getPosition() const override;
 
     virtual void update(const sf::Time& dt, const sf::Vector2<float>& playerPos, sf::RenderWindow& window);
     virtual void getReceivedDamage(float damage);
     bool isEnemyAlive() const { return !dead; }
     bool isBulletCollision(const Bullet& bullet);
 };
+
+#endif

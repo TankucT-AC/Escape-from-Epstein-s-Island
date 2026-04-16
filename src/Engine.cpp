@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 #include "Bullet.hpp"
+#include "UpdateContext.hpp"
 #include "config.hpp"
 #include <cmath>
 #include <memory>
@@ -14,9 +15,13 @@ player(resourceManager.getTexture(config::PLAYER_TEXTURE))
 
     enemies.push_back(std::make_unique<Enemy>(resourceManager.getTexture(config::ENEMY_TEXTURE)));
 
-    // КОСТЫЛЬ
-    board.setSize(sf::Vector2<float>{500.f, 500.f});
-    board.setFillColor(sf::Color::Cyan);
+    roomBlueprints = 
+    {
+        MapData::START_ROOM
+    };
+
+    room = std::make_unique<Room>(roomBlueprints[0], 
+        sf::Vector2<float>(150.f, 150.f), resourceManager);
 }
 
 void Engine::run()
@@ -33,9 +38,8 @@ void Engine::render()
 {
     EngineWindow->setView(EngineCamera);
     EngineWindow->clear();
-    
-    // draw game loop
-    EngineWindow->draw(board);
+
+    room->draw(*EngineWindow);
     player.draw(*EngineWindow);
     for (const auto& enemy : enemies)
     {
@@ -57,12 +61,12 @@ void Engine::update(const sf::Time& dt)
         if (EngineEvent.type == sf::Event::Closed)
             EngineWindow->close();
     }
-    
-    player.update(dt, *EngineWindow);
+
+    player.update(UpdateContext(dt, *EngineWindow, *room));
     player.moveShootTime(dt);
     for (const auto& bullet : bullets)
     {
-        bullet->update(dt, *EngineWindow);
+        bullet->update(UpdateContext(dt, *EngineWindow, *room));
     }
 
     // Удаляем пули, срок жизни которых закончился
@@ -73,10 +77,11 @@ void Engine::update(const sf::Time& dt)
         }), 
         bullets.end());
     
-    // Наносим урон противнику
+    
     for (const auto& bullet : bullets)
     {
         if (!bullet->isBulletAlive()) continue;
+        // Наносим урон противнику
         for (const auto& enemy : enemies)
         {
             if (enemy->isBulletCollision(*bullet)) 
@@ -85,7 +90,9 @@ void Engine::update(const sf::Time& dt)
                 bullet->setBulletAlive(false);
             }
         }
-        
+
+        // Проверка пули на то что она столкнулась со стеной
+        if (room->checkCollision(*bullet)) bullet->setBulletAlive(false);
     }
 
      enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
@@ -102,21 +109,31 @@ void Engine::update(const sf::Time& dt)
     
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player.isShootTime()) 
     {
+        // Задаем вектор для пули
         sf::Vector2<float> mousePos = EngineWindow->mapPixelToCoords(
             sf::Mouse::getPosition(*EngineWindow));
         sf::Vector2<float> dir = mousePos - player.getPosition();
-
+        
+        // Нормализуем вектор
         float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
         if (len > 0) dir /= len;
 
+        auto radians = static_cast<float>(std::atan2(dir.y, dir.x));
+
+        auto degrees = radians * 180.f / config::PI;
+        
+        // Добавляем пулю в массив
         bullets.push_back(std::make_unique<Bullet>(
             resourceManager.getTexture(config::BULLET_PLAYER_TEXTURE),
             player.getPosition(),
-            dir)
+            dir,
+            degrees)
         );
 
+        // Вешаем КД на игрока
         player.cooldown();
     }
 
+    // Центрируем камеру относительно игрока
     EngineCamera.setCenter(player.getPosition());
 }

@@ -2,6 +2,7 @@
 #define PLAYER_HPP
 
 #include "Entity.hpp"
+#include "UpdateContext.hpp"
 #include "config.hpp"
 
 class Player : public Entity
@@ -16,14 +17,13 @@ public:
     );
 
     virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) override;
-    virtual void update(const sf::Time& dt, sf::RenderWindow& window) override;
+    virtual void update(const UpdateContext& ctx) override;
     virtual void draw(sf::RenderWindow& window) override;
+    virtual sf::Rect<float> getHitbox() const override;
 
     virtual void moveShootTime(const sf::Time& dt);
     virtual bool isShootTime() const;
     virtual void cooldown();
-
-    virtual sf::Vector2<float> getPosition() const override;
 };
 
 #endif

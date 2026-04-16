@@ -22,11 +22,16 @@ void Enemy::move(const sf::Time& dt, const sf::Vector2<float>& offset)
 void Enemy::draw(sf::RenderWindow& window)
 {
     window.draw(sprite);
-}
 
-sf::Vector2<float> Enemy::getPosition() const
-{
-    return sprite.getPosition();
+    #ifdef DEBUG_DRAW_COLLISIONS
+        sf::FloatRect hb = this->getHitbox();
+        sf::RectangleShape debugRect({hb.width, hb.height});
+        debugRect.setPosition(hb.left, hb.top);
+        debugRect.setFillColor(sf::Color::Transparent);
+        debugRect.setOutlineColor(sf::Color::Red);
+        debugRect.setOutlineThickness(1.f);
+        window.draw(debugRect);
+    #endif
 }
 
 void Enemy::update(const sf::Time& dt, const sf::Vector2<float>& playerPos, sf::RenderWindow& window)

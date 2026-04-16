@@ -16,6 +16,7 @@
 #include "Bullet.hpp"
 #include "Enemy.hpp"
 #include "ResourceManager.hpp"
+#include "Room.hpp"
 
 class Engine
 {
@@ -29,9 +30,9 @@ private:
     Player player;
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<std::unique_ptr<Bullet>> bullets;
+    std::unique_ptr<Room> room;
 
-    // КОСТЫЛЬ ДЛЯ ТЕСТА
-    sf::RectangleShape board;
+    std::vector<std::vector<std::vector<int>>> roomBlueprints;
 
 public:
     Engine();

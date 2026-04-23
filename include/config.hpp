@@ -2,6 +2,7 @@
 #define CONFIG_PROJECT_HPP
 
 #define DEBUG_DRAW_COLLISIONS 1
+#define DEBUG_AUTH 0
 
 #include <string>
 #include <vector>

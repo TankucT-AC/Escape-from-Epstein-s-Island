@@ -16,6 +16,7 @@ set(SOURCES
     src/Enemy.cpp
     src/Room.cpp
     src/Wall.cpp
+    src/AuthService.cpp
 )
 
 set(HEADERS
@@ -29,6 +30,9 @@ set(HEADERS
     include/Room.hpp
     include/UpdateContext.hpp
     include/Wall.hpp
+    include/AuthClient.hpp
+    include/AuthService.hpp
+    include/UIComponents.hpp
 )
 
 add_executable(game ${SOURCES} ${HEADERS})

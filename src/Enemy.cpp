@@ -23,7 +23,7 @@ void Enemy::draw(sf::RenderWindow& window)
 {
     window.draw(sprite);
 
-    #ifdef DEBUG_DRAW_COLLISIONS
+    #if DEBUG_DRAW_COLLISIONS
         sf::FloatRect hb = this->getHitbox();
         sf::RectangleShape debugRect({hb.width, hb.height});
         debugRect.setPosition(hb.left, hb.top);

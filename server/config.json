@@ -1,0 +1,20 @@
+{
+    "listeners": [
+        {
+            "address": "127.0.0.1",
+            "port": 8080,
+            "https": false
+        }
+    ],
+    "app": {
+        "number_of_threads": 0,
+        "document_root": "./",
+        "upload_path": "uploads",
+        "log": {
+            "log_level": "DEBUG",
+            "display_local_time": true
+        },
+        "client_max_body_size": "2M"
+    },
+    "custom_config": {}
+}

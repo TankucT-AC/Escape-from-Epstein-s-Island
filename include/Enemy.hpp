@@ -1,6 +1,7 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
+#include <SFML/System/Vector2.hpp>
 #include "Bullet.hpp"
 #include "Entity.hpp"
 #include "config.hpp"
@@ -13,7 +14,8 @@ private:
     float health;
     bool dead;
 public:
-    Enemy(const sf::Texture& InitTexture, 
+    Enemy(const sf::Texture& InitTexture,
+        sf::Vector2<float> InitPos, 
         float InitSpeed = config::ENEMY_DEFAULT_SPEED, 
         float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY,
         float InitHealth = config::ENEMY_DEFAULT_HEALTH

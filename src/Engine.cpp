@@ -6,22 +6,26 @@
 #include <memory>
 
 Engine::Engine() : 
-player(resourceManager.getTexture(config::PLAYER_TEXTURE))
+player(resourceManager.getTexture(config::PLAYER_TEXTURE), sf::Vector2<float>{config::TILE_SIZE * 2, config::TILE_SIZE * 2})
 {
     EngineVideoMode.height = config::GAMEBOARD_HEIGHT;
     EngineVideoMode.width  = config::GAMEBOARD_WIDTH;
     EngineWindow = std::make_unique<sf::RenderWindow>(EngineVideoMode, config::GAMEBOARD_NAME);
     EngineCamera.setCenter(player.getPosition());
 
-    enemies.push_back(std::make_unique<Enemy>(resourceManager.getTexture(config::ENEMY_TEXTURE)));
+    enemies.push_back(std::make_unique<Enemy>(resourceManager.getTexture(config::ENEMY_TEXTURE), sf::Vector2<float>{0.f, 0.f}));
 
     roomBlueprints = 
     {
-        MapData::START_ROOM
+        MapData::SQUARE_ROOM
     };
 
     room = std::make_unique<Room>(roomBlueprints[0], 
-        sf::Vector2<float>(150.f, 150.f), resourceManager);
+        sf::Vector2<float>(0.f, 0.f), resourceManager);
+
+    // TODO: костыль, потом уберу
+    test_wall = std::make_unique<Wall>(resourceManager.getTexture(config::DEFAULT_WALL_TEXTURE), 
+        sf::Vector2<float>{config::TILE_SIZE * 2, config::TILE_SIZE * 2});
 }
 
 void Engine::run()
@@ -39,11 +43,14 @@ void Engine::render()
     EngineWindow->setView(EngineCamera);
     EngineWindow->clear();
 
+    // TODO: реализовать уровни 
     room->draw(*EngineWindow);
+    // TODO: костыль, потом уберу
+    test_wall->draw(*EngineWindow);
     player.draw(*EngineWindow);
     for (const auto& enemy : enemies)
     {
-        enemy->draw(*EngineWindow);
+        //enemy->draw(*EngineWindow);
     }
         
     for (const auto& bullet : bullets)

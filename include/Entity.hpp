@@ -17,8 +17,15 @@ protected:
     float speed;
 public:
     Entity(const sf::Texture& InitTexture, 
-        float InitSpeed) : 
-    sprite(InitTexture), speed(InitSpeed) {}
+        float InitSpeed,
+        sf::Vector2<float> InitPos) : 
+    sprite(InitTexture), speed(InitSpeed) 
+    { 
+        sprite.setPosition(InitPos);
+        
+        auto bounds = sprite.getLocalBounds();
+        sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+    }
     virtual ~Entity() = default;
 
     virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) = 0;

@@ -75,8 +75,6 @@ void AuthService::handleInput(sf::Event& event)
 
 bool AuthService::run() 
 {
-    if (authClient.devMode) return true;
-
     while (AuthWindow.isOpen()) 
     {
         auto isAuth= this->update();

@@ -1,18 +1,11 @@
 #ifndef AUTH_CLIENT_HPP
 #define AUTH_CLIENT_HPP
 
-#include "config.hpp"
 #include <SFML/Network.hpp>
 #include <nlohmann/json.hpp>
 
 class AuthClient {
 public:
-#if !DEBUG_AUTH
-    bool devMode = false;
-#else
-    bool devMode = true; 
-#endif
-
     struct Response {
         bool success = false;
         std::string message;
@@ -21,13 +14,11 @@ public:
 
     Response login(const std::string& user, const std::string& pass) 
     {
-        if (devMode) return {true, "success"};
         return request("/api/login", {{"login", user}, {"password", pass}});
     }
 
     Response registerUser(const std::string& user) 
     {
-        if (devMode) return {true, "success", "dev_pass"};
         return request("/api/register", {{"login", user}});
     }
 

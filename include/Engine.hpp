@@ -31,6 +31,8 @@ private:
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<std::unique_ptr<Bullet>> bullets;
     std::unique_ptr<Room> room;
+    // TODO: костыль, потом уберу
+    std::unique_ptr<Wall> test_wall;
 
     std::vector<std::vector<std::vector<int>>> roomBlueprints;
 

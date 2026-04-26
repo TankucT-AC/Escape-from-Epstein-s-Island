@@ -6,13 +6,10 @@
 #include "Room.hpp"
 
 Player::Player(const sf::Texture& InitTexture, 
+    sf::Vector2<float> InitPos,
     float InitSpeed,
-    float InitShootDelay) : Entity(InitTexture, InitSpeed), ShootTime(0.f),
-    ShootDelay(InitShootDelay)
-{
-    auto bounds = sprite.getLocalBounds();
-    sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-}
+    float InitShootDelay) : Entity(InitTexture, InitSpeed, InitPos), ShootTime(0.f),
+    ShootDelay(InitShootDelay) {}
 
 void Player::move(const sf::Time& dt, const sf::Vector2<float>& offset)
 {

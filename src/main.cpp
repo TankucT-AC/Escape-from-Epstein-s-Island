@@ -2,16 +2,17 @@
 #include "AuthClient.hpp"
 #include "AuthService.hpp"
 #include <iostream>
+#include "config.hpp"
 
 int main() {
     try {
-        AuthClient auth;
-        AuthService authService(auth);
-
+        #if !DEBUG_NOT_AUTH
+            AuthClient auth;
+            AuthService authService(auth);
         if (!authService.run()) {
             return EXIT_SUCCESS;
         }
-
+        #endif // DEBUG_NOT_AUTH
         Engine engine;
         engine.run();
 

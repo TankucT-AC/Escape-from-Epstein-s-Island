@@ -12,6 +12,7 @@ private:
     float ShootDelay;
 public:
     Player(const sf::Texture& InitTexture, 
+        sf::Vector2<float> InitPos,
         float InitSpeed = config::PLAYER_DEFAULT_SPEED, 
         float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY
     );

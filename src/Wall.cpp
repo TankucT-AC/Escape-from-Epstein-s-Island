@@ -2,10 +2,10 @@
 #include "config.hpp"
 
 Wall::Wall(const sf::Texture& InitTexture, sf::Vector2<float> InitPos) : 
-    Entity(InitTexture, 0.f) 
+    Entity(InitTexture, 0.f, InitPos) 
 {
+    
     float scale = config::TILE_SIZE / sprite.getLocalBounds().width;
-    sprite.setPosition(InitPos);
     sprite.setScale({scale, scale});
 }
 

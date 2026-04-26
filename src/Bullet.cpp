@@ -11,12 +11,11 @@ Bullet::Bullet(const sf::Texture& InitTexture,
     float InitSpeed,
     float InitLifetime,
     float InitDamage
-) : Entity(InitTexture, InitSpeed), direction(InitDirection),
+) : Entity(InitTexture, InitSpeed, InitStartPos), direction(InitDirection),
     lifetime(InitLifetime), damage(InitDamage), dead(false)
 {
     sf::FloatRect b = sprite.getLocalBounds();
     sprite.setOrigin(b.width / 2.f, b.height / 2.f);
-    sprite.setPosition(InitStartPos);
     sprite.setScale(0.5f, 0.5f);
     sprite.setRotation(InitDegree);
 }

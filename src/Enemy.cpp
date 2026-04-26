@@ -3,10 +3,11 @@
 #include "Bullet.hpp"
 
 Enemy::Enemy(const sf::Texture& InitTexture, 
+        sf::Vector2<float> InitPos,
         float InitSpeed, 
         float InitShootDelay,
         float InitHealth
-) : Entity(InitTexture, InitSpeed), shootTime(0.f), 
+) : Entity(InitTexture, InitSpeed, InitPos), shootTime(0.f), 
     shootDelay(InitShootDelay), health(InitHealth),
     dead(false)
 {

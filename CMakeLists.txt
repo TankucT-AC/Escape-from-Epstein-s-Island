@@ -5,6 +5,8 @@ project(2DGame)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(OpenSSL REQUIRED)
+
 find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio network)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SFML)
 
@@ -33,12 +35,14 @@ set(HEADERS
     include/AuthClient.hpp
     include/AuthService.hpp
     include/UIComponents.hpp
+    include/httplib.h
 )
 
 add_executable(game ${SOURCES} ${HEADERS})
 
 target_include_directories(game PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${OPENSSL_INCLUDE_DIR}
 )
 
 target_link_libraries(game PRIVATE
@@ -47,4 +51,7 @@ target_link_libraries(game PRIVATE
     sfml-system
     sfml-audio
     sfml-network
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    pthread
 )

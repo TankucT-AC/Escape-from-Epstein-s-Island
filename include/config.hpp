@@ -2,20 +2,24 @@
 #define CONFIG_PROJECT_HPP
 
 #define DEBUG_DRAW_COLLISIONS 1
-#define DEBUG_NOT_AUTH 1
+#define DEBUG_NOT_AUTH 0
 
 #include <string>
 #include <vector>
 
 namespace config
-{
+{   
+    static const std::string IPv4 = "127.0.0.1";
+    static const int PORT = 8080;
+    static const std::string SCHEME_HOST_PORT = "https://" + IPv4 + ":" + std::to_string(PORT);
+
     // Математические константы
-    const float PI = 3.14159265f;
+    static const float PI = 3.14159265f;
 
     // Параметры для игрового окна
     static const int GAMEBOARD_HEIGHT       = 800;
     static const int GAMEBOARD_WIDTH        = 1200;
-    const int TILE_SIZE = 64;
+    static const int TILE_SIZE = 64;
     static const std::string GAMEBOARD_NAME = "gameboard";
 
     static const std::string ASSETS_PATH    = "assets/";
@@ -52,7 +56,7 @@ namespace MapData {
     using RoomGrid = std::vector<std::vector<int>>;
 
     // Обычная квадратная комната
-    const RoomGrid SQUARE_ROOM = {
+    static const RoomGrid SQUARE_ROOM = {
         {1, 1, 2, 1, 1},
         {1, 0, 0, 0, 1},
         {2, 0, 0, 0, 2},
@@ -61,7 +65,7 @@ namespace MapData {
     };
 
     // Г-образный коридор
-    const RoomGrid L_CORRIDOR = {
+    static const RoomGrid L_CORRIDOR = {
         {1, 1, 2, 1, 1},
         {1, 0, 0, 0, 1},
         {1, 0, 1, 1, 1},
@@ -70,7 +74,7 @@ namespace MapData {
     };
 
     // Комната-крест (четыре выхода)
-    const RoomGrid CROSS_ROOM = {
+    static const RoomGrid CROSS_ROOM = {
         {1, 1, 2, 1, 1},
         {1, 0, 0, 0, 1},
         {2, 0, 0, 0, 2},
@@ -79,7 +83,7 @@ namespace MapData {
     };
     
     // Длинный горизонтальный коридор
-    const RoomGrid HORIZ_HALL = {
+    static const RoomGrid HORIZ_HALL = {
         {1, 1, 1, 1, 1, 1, 1, 1, 1},
         {2, 0, 0, 0, 0, 0, 0, 0, 2},
         {1, 1, 1, 1, 1, 1, 1, 1, 1}

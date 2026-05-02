@@ -3,7 +3,10 @@
         {
             "address": "127.0.0.1",
             "port": 8080,
-            "https": false
+            "https": true,
+            "cert": "./cert.pem",
+            "key": "./key.pem",
+            "use_old_tls": false
         }
     ],
     "app": {

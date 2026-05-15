@@ -19,6 +19,7 @@ set(SOURCES
     src/Room.cpp
     src/Wall.cpp
     src/AuthService.cpp
+    src/BSPTree.cpp
 )
 
 set(HEADERS
@@ -36,6 +37,8 @@ set(HEADERS
     include/AuthService.hpp
     include/UIComponents.hpp
     include/httplib.h
+    include/BSPTree.hpp
+    include/DungeonGenerator.hpp
 )
 
 add_executable(game ${SOURCES} ${HEADERS})

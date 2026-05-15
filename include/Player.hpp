@@ -25,6 +25,8 @@ public:
     virtual void moveShootTime(const sf::Time& dt);
     virtual bool isShootTime() const;
     virtual void cooldown();
+
+    void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
 };
 
 #endif

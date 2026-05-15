@@ -18,7 +18,7 @@ public:
     void draw(sf::RenderWindow& window);
 
     template <typename Object>
-    bool checkCollision(const Object& object)
+    bool checkCollision(const Object& object) const
     { 
         auto objectHitbox = object.getHitbox();
         for (const auto& wall : walls)
@@ -29,6 +29,8 @@ public:
 
         return false;
     }
+
+    sf::Vector2<float> getPosition() const { return walls.front()->getPosition(); }
 };
 
 #endif // ROOM_HPP

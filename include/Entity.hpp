@@ -34,6 +34,7 @@ public:
 
     virtual sf::Vector2<float> getPosition() const { return sprite.getPosition(); };
     virtual sf::Rect<float> getHitbox() const { return sprite.getGlobalBounds(); };
+    virtual void setPosition(const sf::Vector2<float>& newPos) { sprite.setPosition(newPos); };
 };
 
 #endif

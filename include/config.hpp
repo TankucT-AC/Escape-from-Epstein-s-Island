@@ -2,7 +2,7 @@
 #define CONFIG_PROJECT_HPP
 
 #define DEBUG_DRAW_COLLISIONS 1
-#define DEBUG_NOT_AUTH 0
+#define DEBUG_NOT_AUTH 1
 
 #include <string>
 #include <vector>
@@ -54,40 +54,6 @@ namespace config
 
 namespace MapData {
     using RoomGrid = std::vector<std::vector<int>>;
-
-    // Обычная квадратная комната
-    static const RoomGrid SQUARE_ROOM = {
-        {1, 1, 2, 1, 1},
-        {1, 0, 0, 0, 1},
-        {2, 0, 0, 0, 2},
-        {1, 0, 0, 0, 1},
-        {1, 1, 2, 1, 1}
-    };
-
-    // Г-образный коридор
-    static const RoomGrid L_CORRIDOR = {
-        {1, 1, 2, 1, 1},
-        {1, 0, 0, 0, 1},
-        {1, 0, 1, 1, 1},
-        {1, 0, 0, 0, 2},
-        {1, 1, 1, 1, 1}
-    };
-
-    // Комната-крест (четыре выхода)
-    static const RoomGrid CROSS_ROOM = {
-        {1, 1, 2, 1, 1},
-        {1, 0, 0, 0, 1},
-        {2, 0, 0, 0, 2},
-        {1, 0, 0, 0, 1},
-        {1, 1, 2, 1, 1}
-    };
-    
-    // Длинный горизонтальный коридор
-    static const RoomGrid HORIZ_HALL = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {2, 0, 0, 0, 0, 0, 0, 0, 2},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1}
-    };
 }
 
 #endif

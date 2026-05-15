@@ -47,21 +47,18 @@ void Player::update(const UpdateContext& ctx)
 
         float step = speed * ctx.dt.asSeconds();
         sf::Vector2f oldPos = sprite.getPosition();
-
+        
         sprite.move(offset.x * step, 0.f);
         if (ctx.room.checkCollision(*this)) {
             sprite.setPosition(oldPos.x, sprite.getPosition().y); 
         }
 
-        // Пробуем по Y (уже с учетом возможного нового X)
         sf::Vector2f posAfterX = sprite.getPosition();
         sprite.move(0.f, offset.y * step);
         if (ctx.room.checkCollision(*this)) {
             sprite.setPosition(posAfterX.x, oldPos.y);
         }
     }
-
-    //this->move(ctx.dt, offset);
 
     // вращение игрока в зависимости от позиции мышки
     sf::Vector2<int> mousePos = sf::Mouse::getPosition(ctx.window);

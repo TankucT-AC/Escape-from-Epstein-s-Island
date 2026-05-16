@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Magomed Gadzhiumarov
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DATABASE_MANAGER_H
 #define DATABASE_MANAGER_H
 

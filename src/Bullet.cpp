@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Magomed Gadzhiumarov
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "Bullet.hpp"
 #include <SFML/System/Time.hpp>
 #include <cmath>

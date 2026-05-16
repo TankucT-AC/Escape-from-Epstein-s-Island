@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Magomed Gadzhiumarov
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef CONFIG_PROJECT_HPP
 #define CONFIG_PROJECT_HPP
 

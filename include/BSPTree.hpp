@@ -9,11 +9,13 @@
 
 class BSPNode 
 {
-public:
+private:
     sf::IntRect area; // Область ноды в тайлах
     std::unique_ptr<BSPNode> leftChild;
     std::unique_ptr<BSPNode> rightChild;
 
+    friend class DungeonGenerator;
+public:
     explicit BSPNode(const sf::IntRect& tileArea);
     
     bool split(int minNodeSize, std::mt19937& rng);

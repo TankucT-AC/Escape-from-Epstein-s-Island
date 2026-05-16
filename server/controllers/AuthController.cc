@@ -86,7 +86,6 @@ bool verifyPassword(const std::string& password, const std::string& storedHash) 
     return ss.str() == originalHashHex;
 }
 
-// TODO: вынести магические числа и названия в отдельный файл или в приватные поля класса
 void AuthController::registerUser(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback) 
 {
     auto json = req->getJsonObject();

@@ -49,7 +49,7 @@ private:
                 out.message = "SERVER_ERROR_" + std::to_string(res->status);
             }
         } else {
-            auto err = res.error();
+            httplib::Error err = res.error();
             unsigned long ssl_err = ERR_get_error();
             char err_buf[256];
             ERR_error_string_n(ssl_err, err_buf, sizeof(err_buf));

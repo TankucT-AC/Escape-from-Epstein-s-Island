@@ -5,6 +5,13 @@
 #include "Wall.hpp"
 #include <memory>
 
+enum class RoomElements
+{
+    FLOOR,
+    WALL,
+    TEMP_FLAG
+};
+
 class Room
 {
 private:

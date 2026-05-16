@@ -1,4 +1,5 @@
 #include "BSPTree.hpp"
+#include "Room.hpp"
 
 BSPNode::BSPNode(const sf::IntRect& tileArea) : area(tileArea), leftChild(nullptr), rightChild(nullptr) {}
 
@@ -35,11 +36,11 @@ sf::Vector2<int> BSPNode::carve(MapData::RoomGrid& grid, int minRoomSize, std::m
 
         int startX = std::min(centerL.x, centerR.x);
         int endX = std::max(centerL.x, centerR.x);
-        for (int x = startX; x <= endX; ++x) grid[centerL.y][x] = 2;
+        for (int x = startX; x <= endX; ++x) grid[centerL.y][x] = static_cast<int>(RoomElements::TEMP_FLAG);
 
         int startY = std::min(centerL.y, centerR.y);
         int endY = std::max(centerL.y, centerR.y);
-        for (int y = startY; y <= endY; ++y) grid[y][centerR.x] = 2;
+        for (int y = startY; y <= endY; ++y) grid[y][centerR.x] = static_cast<int>(RoomElements::TEMP_FLAG);
 
         return centerL;
     }
@@ -59,7 +60,7 @@ sf::Vector2<int> BSPNode::carve(MapData::RoomGrid& grid, int minRoomSize, std::m
     {
         for (int x = roomLeft; x < roomLeft + roomW; ++x) 
         {
-            grid[y][x] = 2; 
+            grid[y][x] = static_cast<int>(RoomElements::TEMP_FLAG); 
         }
     }
 

@@ -8,7 +8,7 @@ Room::Room(const std::vector<std::vector<int>>& InitBlueprint,
     {
         for (int x = 0; x < static_cast<int>(InitBlueprint[y].size()); ++x)
         {
-            if (InitBlueprint[y][x] == 1)
+            if (InitBlueprint[y][x] == static_cast<int>(RoomElements::WALL))
             {
                 sf::Vector2<float> wall_pos = {
                     InitPos.x + (x * config::TILE_SIZE), 

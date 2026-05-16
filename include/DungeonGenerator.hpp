@@ -2,6 +2,7 @@
 #define DUNGEON_GENERATOR_HPP
 
 #include "BSPTree.hpp"
+#include "Room.hpp"
 
 struct DungeonData 
 {
@@ -38,26 +39,35 @@ public:
 
         sf::Vector2<int> spawnTile = m_root->carve(grid, minRoomSize, m_rng);
 
-        // ПОСТ-ПРОЦЕССИНГ СТЕН (твой текущий код обводки стен)
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                if (grid[y][x] == 2) {
-                    for (int dy = -1; dy <= 1; ++dy) {
-                        for (int dx = -1; dx <= 1; ++dx) {
-                            int ny = y + dy; int nx = x + dx;
-                            if (ny >= 0 && ny < height && nx >= 0 && nx < width && grid[ny][nx] == 0) {
-                                grid[ny][nx] = 1;
-                            }
+        // ПОСТ-ПРОЦЕССИНГ СТЕН
+        int dx[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+        int dy[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+        for (int y = 0; y < height; ++y) 
+        {
+            for (int x = 0; x < width; ++x) 
+            {
+                if (grid[y][x] == static_cast<int>(RoomElements::TEMP_FLAG)) 
+                {
+                    for (int i = 0; i < 9; ++i)
+                    {
+                        int curr_x = x + dx[i];
+                        int curr_y = y + dy[i];
+                        if (curr_x >= 0 && curr_x < width && curr_y >= 0 && curr_y < height
+                            && grid[curr_y][curr_x] == static_cast<int>(RoomElements::FLOOR))
+                        {
+                            grid[curr_y][curr_x] = static_cast<int>(RoomElements::WALL);
                         }
                     }
                 }
             }
         }
 
-        // Очистка маркеров пола (превращаем 2 в 0)
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                if (grid[y][x] == 2) grid[y][x] = 0;
+        // Очистка временных маркеров пола (превращаем 2 в 0)
+        for (int y = 0; y < height; ++y) 
+        {
+            for (int x = 0; x < width; ++x) 
+            {
+                if (grid[y][x] == 2) grid[y][x] = static_cast<int>(RoomElements::FLOOR);
             }
         }
 

@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "DatabaseManager.h"
+#include <mutex>
+#include <optional>
 #include <stdexcept>
 
 DatabaseManager& DatabaseManager::instance() 
@@ -22,7 +24,8 @@ DatabaseManager::DatabaseManager(const std::string& dbName)
     executeRaw("CREATE TABLE IF NOT EXISTS USERS ("
                "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                "LOGIN TEXT NOT NULL UNIQUE,"
-               "PASSWORD_HASH TEXT NOT NULL);");
+               "PASSWORD_HASH TEXT NOT NULL,"
+               "TOTP_2FA TEXT);");
 }
 
 void DatabaseManager::executeRaw(const std::string& sql) 
@@ -46,6 +49,7 @@ std::optional<DatabaseManager::UniqueStmt> DatabaseManager::prepare(const std::s
 
 bool DatabaseManager::insertNewUser(const std::string& login, const std::string& passHash) 
 {
+    std::lock_guard<std::mutex> lock(mut);
     auto stmtOpt = prepare("INSERT INTO USERS (LOGIN, PASSWORD_HASH) VALUES (?, ?);");
     if (!stmtOpt) return false;
 
@@ -58,6 +62,7 @@ bool DatabaseManager::insertNewUser(const std::string& login, const std::string&
 
 std::optional<std::string> DatabaseManager::findHashPass(const std::string& login) 
 {
+    std::lock_guard<std::mutex> lock(mut);
     auto stmtOpt = prepare("SELECT PASSWORD_HASH FROM USERS WHERE LOGIN = ?;");
     if (!stmtOpt) return std::nullopt;
 
@@ -65,8 +70,40 @@ std::optional<std::string> DatabaseManager::findHashPass(const std::string& logi
     sqlite3_bind_text(stmt.get(), 1, login.c_str(), -1, SQLITE_STATIC);
 
     if (sqlite3_step(stmt.get()) == SQLITE_ROW) {
-        const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt.get(), 0));
+        auto text = reinterpret_cast<const char*>(sqlite3_column_text(stmt.get(), 0));
         if (text) return std::string(text);
     }
+    return std::nullopt;
+}
+
+std::optional<std::string> DatabaseManager::connect2FA(const std::string& login)
+{
+    std::lock_guard<std::mutex> lock(mut);
+    auto stmtOpt = prepare("UPDATE USERS SET TOTP_2FA = ? WHERE LOGIN = ?;");
+    if (!stmtOpt) return std::nullopt;
+
+    auto& stmt = *stmtOpt;
+    std::string TOTP_2FA = TOTP_gen.generateTOTPSecret();
+    sqlite3_bind_text(stmt.get(), 1, TOTP_2FA.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt.get(), 2, login.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt.get()) == SQLITE_DONE) return TOTP_2FA;
+    return std::nullopt;
+}
+
+std::optional<std::string> DatabaseManager::getTOTPSecret(const std::string& login)
+{
+    std::lock_guard<std::mutex> lock(mut);
+    auto stmtOpt = prepare("SELECT TOTP_2FA FROM USERS WHERE LOGIN = ?;");
+    if (!stmtOpt) return std::nullopt;
+
+    auto& stmt = *stmtOpt;
+    sqlite3_bind_text(stmt.get(), 1, login.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt.get()) == SQLITE_ROW) {
+        auto text = reinterpret_cast<const char*>(sqlite3_column_text(stmt.get(), 0));
+        if (text) return std::string(text);
+    }
+
     return std::nullopt;
 }

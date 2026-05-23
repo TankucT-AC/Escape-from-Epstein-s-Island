@@ -3,63 +3,20 @@
 
 #include "AuthController.h"
 #include "DatabaseManager.h"
+#include "TOTPGenerator.h"
+#include <drogon/HttpRequest.h>
+#include <drogon/HttpResponse.h>
+#include <json/value.h>
 #include <sqlite3.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
-#include <random>
+#include <memory>
+#include <optional>
+#include <chrono>
 
-std::string passHash(const std::string& password) 
+bool verifyPassword(const std::string& password, const std::string& storedHash) 
 {
-    const int SALT_SIZE = 16;
-    std::vector<unsigned char> salt(SALT_SIZE); 
-    if (RAND_bytes(salt.data(), SALT_SIZE) != 1) 
-    {
-        throw std::runtime_error("RAND_bytes failed");
-    }
-
-    const int KEYLEN = 32;
-    std::vector<unsigned char> hash(KEYLEN);
-
-    if (PKCS5_PBKDF2_HMAC(
-            password.c_str(), password.size(), 
-            salt.data(), salt.size(), 
-            600000,           // итерации
-            EVP_sha256(),   // алгоритм хеширования
-            KEYLEN,         // желаемая длина выхода
-            hash.data()        // куда записать
-        ) != 1) {
-        throw std::runtime_error("PBKDF2 failed");
-    }
-
-    std::stringstream ss;
-    for (unsigned char b : salt) ss << std::hex << std::setw(2) << std::setfill('0') << (int)b;
-    ss << ":";
-    for (unsigned char b : hash) ss << std::hex << std::setw(2) << std::setfill('0') << (int)b;
-
-    return ss.str();
-}
-
-std::string generateRandomPass() noexcept
-{
-    static const std::string alphabet = 
-        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> randSymbol(0, alphabet.size() - 1);
-
-    std::string result;
-    const int PASS_LEN = 10;
-    for (int i = 0; i < PASS_LEN; ++i) 
-    {
-        auto new_char = alphabet[randSymbol(gen)];
-        result.push_back(new_char);
-    }
-    
-    return result; 
-}
-
-bool verifyPassword(const std::string& password, const std::string& storedHash) {
     size_t colonPos = storedHash.find(':');
     if (colonPos == std::string::npos) return false;
 
@@ -91,7 +48,7 @@ bool verifyPassword(const std::string& password, const std::string& storedHash) 
 
 void AuthController::registerUser(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback) 
 {
-    auto json = req->getJsonObject();
+    std::shared_ptr<Json::Value> json = req->getJsonObject();
     Json::Value res;
 
     if (!json || !(*json).isMember("login")) 
@@ -103,8 +60,8 @@ void AuthController::registerUser(const HttpRequestPtr& req, std::function<void 
     }
 
     std::string login = (*json)["login"].asString();
-    std::string password = generateRandomPass();
-    std::string password_hash = passHash(password);
+    std::string password = TOTP_gen.generateRandomPass();
+    std::string password_hash = TOTP_gen.passHash(password);
 
     if (DatabaseManager::instance().insertNewUser(login, password_hash)) 
     { 
@@ -120,15 +77,15 @@ void AuthController::registerUser(const HttpRequestPtr& req, std::function<void 
 
 void AuthController::loginUser(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback) 
 {
-    auto json = req->getJsonObject();
+    std::shared_ptr<Json::Value> json = req->getJsonObject();
     Json::Value res;
 
-    auto& val = *json;
+    Json::Value& val = *json;
     std::string login = val["login"].asString();
     std::string password = val["password"].asString();
 
     bool success = false;
-    auto db_hash = DatabaseManager::instance().findHashPass(login);
+    std::optional<std::string> db_hash = DatabaseManager::instance().findHashPass(login);
     if (db_hash.has_value()) 
     {
         success = verifyPassword(password, db_hash.value());
@@ -136,5 +93,56 @@ void AuthController::loginUser(const HttpRequestPtr& req, std::function<void (co
     
     res["status"] = success ? "success" : "fail";
     
+    callback(HttpResponse::newHttpJsonResponse(res));
+}
+
+void AuthController::register2FA(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback)
+{
+    std::shared_ptr<Json::Value> json = req->getJsonObject();
+    Json::Value res;
+
+    std::string login = (*json)["login"].asString();
+    
+    std::optional<std::string> TOTP_2FA = DatabaseManager::instance().connect2FA(login);
+    
+    res["status"] = TOTP_2FA.has_value() ? "success" : "fail";
+    if (TOTP_2FA.has_value()) res["totp_secret"] = TOTP_2FA.value();
+    
+    callback(HttpResponse::newHttpJsonResponse(res));
+}
+
+void AuthController::login2FA(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback)
+{
+    std::shared_ptr<Json::Value> json = req->getJsonObject();
+    Json::Value res;
+
+    std::string login = (*json)["login"].asString();
+    std::string TOTP_key = (*json)["totp_key"].asString();
+    
+    std::optional<std::string> TOTP_secret = DatabaseManager::instance().getTOTPSecret(login);
+    if (TOTP_secret.has_value())
+    {
+        auto now = std::chrono::system_clock::now();
+        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
+
+        bool is_success = false;
+        for (int offset = -30; offset <= 30; offset += 30)
+        {
+            unsigned long long currTime = seconds.count() + offset;
+            std::string currHexUnixTime = TOTP_gen.getHexUnixTime(currTime / 30);
+            std::string serverTOTPkey = TOTP_gen.generate(TOTP_secret.value(), currHexUnixTime, "6", "HmacSHA1");
+            
+            if (serverTOTPkey.length() == TOTP_key.length() &&
+                    CRYPTO_memcmp(serverTOTPkey.c_str(), TOTP_key.c_str(), serverTOTPkey.length()) == 0)
+            {
+                is_success = true;
+            }
+        }
+
+        res["status"] = (is_success) ? "success" : "fail";
+    } else {
+        res["status"] = "error";
+    }
+
     callback(HttpResponse::newHttpJsonResponse(res));
 }

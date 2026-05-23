@@ -11,6 +11,7 @@ set(SOURCE_FILES
     main.cc
     controllers/AuthController.cc
     controllers/DatabaseManager.cc
+    controllers/TOTPGenerator.cc
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

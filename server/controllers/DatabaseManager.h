@@ -8,6 +8,8 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <mutex>
+#include "TOTPGenerator.h"
 
 class DatabaseManager 
 {
@@ -19,6 +21,8 @@ public:
 
     bool insertNewUser(const std::string& login, const std::string& passHash);
     std::optional<std::string> findHashPass(const std::string& login);
+    std::optional<std::string> connect2FA(const std::string& login);
+    std::optional<std::string> getTOTPSecret(const std::string& login);
 
 private:
     // Конструктор в привате
@@ -37,6 +41,9 @@ private:
     void executeRaw(const std::string& sql);
 
     UniqueDb db;
+    TOTPGenerator TOTP_gen; // Генератор секретов и ключей
+
+    std::mutex mut;
 };
 
 #endif

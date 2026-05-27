@@ -1,3 +1,4 @@
 # файлы кэша и сборки
 .cache
 build
+.aider*

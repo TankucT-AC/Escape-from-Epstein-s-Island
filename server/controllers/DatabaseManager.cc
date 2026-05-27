@@ -83,11 +83,11 @@ std::optional<std::string> DatabaseManager::connect2FA(const std::string& login)
     if (!stmtOpt) return std::nullopt;
 
     auto& stmt = *stmtOpt;
-    std::string TOTP_2FA = TOTP_gen.generateTOTPSecret();
-    sqlite3_bind_text(stmt.get(), 1, TOTP_2FA.c_str(), -1, SQLITE_STATIC);
+    std::string TOTP_secret = TOTP_gen.generateTOTPSecret();
+    sqlite3_bind_text(stmt.get(), 1, TOTP_secret.c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt.get(), 2, login.c_str(), -1, SQLITE_STATIC);
 
-    if (sqlite3_step(stmt.get()) == SQLITE_DONE) return TOTP_2FA;
+    if (sqlite3_step(stmt.get()) == SQLITE_DONE) return TOTP_secret;
     return std::nullopt;
 }
 

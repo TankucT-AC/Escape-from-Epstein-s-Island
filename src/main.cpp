@@ -11,11 +11,15 @@ int main() {
     try {
         #if !DEBUG_NOT_AUTH
             AuthClient auth;
-            AuthService authService(auth);
-        if (!authService.run()) {
-            return EXIT_SUCCESS;
-        }
+            AuthService authService(auth); 
+            
+            if (!authService.run()) {
+                std::cout << "[Main] Авторизация не удалась или окно закрыто. Выход.\n";
+                return EXIT_SUCCESS;
+            }
         #endif // DEBUG_NOT_AUTH
+
+        // Если дошли сюда, значит авторизация успешна (или дебаг)
         Engine engine;
         engine.run();
 

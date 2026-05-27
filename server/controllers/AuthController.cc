@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Magomed Gadzhiumarov
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "AuthController.h"
 #include "DatabaseManager.h"
 #include "TOTPGenerator.h"
@@ -15,6 +16,62 @@
 #include <optional>
 #include <chrono>
 
+#include "qrcodegen.hpp"
+#include "stb_image_write.h"
+
+std::string generateQrCode(const std::string& uri)
+{
+    qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(uri.c_str(), qrcodegen::QrCode::Ecc::LOW);
+
+    int size = qr.getSize();
+    int scale = 4;  // Каждый квадратик QR будет 4x4 пикселя
+    int border = 2; // Белая рамка вокруг (требование стандарта QR)
+    int imgSize = (size + border * 2) * scale;
+
+    // Создаем буфер для RGB (3 байта на пиксель), заливаем белым цветом (255)
+    std::vector<unsigned char> pixels(imgSize * imgSize * 3, 255);
+
+    // Закрашиваем черные модули
+    for (int y = 0; y < size; y++) 
+    {
+        for (int x = 0; x < size; x++) 
+        {
+            if (qr.getModule(x, y)) 
+            {
+                // Если модуль черный, закрашиваем квадрат scale x scale
+                int startX = (x + border) * scale;
+                int startY = (y + border) * scale;
+                for (int dy = 0; dy < scale; dy++) 
+                {
+                    for (int dx = 0; dx < scale; dx++) 
+                    {
+                        int pixelIndex = ((startY + dy) * imgSize + (startX + dx)) * 3;
+                        pixels[pixelIndex] = 0;     // R
+                        pixels[pixelIndex + 1] = 0; // G
+                        pixels[pixelIndex + 2] = 0; // B
+                    }
+                }
+            }
+        }
+    }
+
+    int pngLength = 0;
+    // stbi_write_png_to_mem возвращает сырой указатель на буфер с PNG-данными
+    unsigned char* pngData = stbi_write_png_to_mem(
+        pixels.data(), 
+        0, // stride (автоматически)
+        imgSize, 
+        imgSize, 
+        3, // компонентов на пиксель (RGB)
+        &pngLength
+    );
+
+    std::string pngString(reinterpret_cast<const char*>(pngData), pngLength);
+    STBIW_FREE(pngData); // Очищаем память, выделенную stb
+
+    return pngString;
+}
+
 bool verifyPassword(const std::string& password, const std::string& storedHash) 
 {
     size_t colonPos = storedHash.find(':');
@@ -24,7 +81,8 @@ bool verifyPassword(const std::string& password, const std::string& storedHash)
     std::string originalHashHex = storedHash.substr(colonPos + 1);
 
     std::vector<unsigned char> salt;
-    for (size_t i = 0; i < saltHex.length(); i += 2) {
+    for (size_t i = 0; i < saltHex.length(); i += 2) 
+    {
         salt.push_back(std::stoi(saltHex.substr(i, 2), nullptr, 16));
     }
 
@@ -92,6 +150,9 @@ void AuthController::loginUser(const HttpRequestPtr& req, std::function<void (co
     }
     
     res["status"] = success ? "success" : "fail";
+
+    std::optional<std::string> TOTP_secret = DatabaseManager::instance().getTOTPSecret(login);
+    res["is_totp_verify"] = TOTP_secret.has_value();
     
     callback(HttpResponse::newHttpJsonResponse(res));
 }
@@ -103,10 +164,27 @@ void AuthController::register2FA(const HttpRequestPtr& req, std::function<void (
 
     std::string login = (*json)["login"].asString();
     
-    std::optional<std::string> TOTP_2FA = DatabaseManager::instance().connect2FA(login);
+    std::optional<std::string> TOTP_secret = DatabaseManager::instance().connect2FA(login);
     
-    res["status"] = TOTP_2FA.has_value() ? "success" : "fail";
-    if (TOTP_2FA.has_value()) res["totp_secret"] = TOTP_2FA.value();
+    if (!TOTP_secret.has_value())
+    {
+        res["status"] = "fail";
+    } else {
+        res["status"] = TOTP_secret.has_value() ? "success" : "fail";
+
+        std::string app_name = "EscapeFromEpsteinIsland";
+        std::string uri = "otpauth://totp/" + app_name + ":" + login + 
+                  "?secret=" + TOTP_secret.value() + 
+                  "&issuer=" + app_name;
+        
+        std::string pngString = generateQrCode(uri);
+        res["qr_code_base64"] = drogon::utils::base64Encode(
+            reinterpret_cast<const unsigned char*>(pngString.data()), 
+            pngString.size()
+        );
+
+        res["totp_secret"] = TOTP_secret.value();
+    }
     
     callback(HttpResponse::newHttpJsonResponse(res));
 }

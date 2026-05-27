@@ -5,7 +5,7 @@
 #define CONFIG_PROJECT_HPP
 
 #define DEBUG_DRAW_COLLISIONS 1
-#define DEBUG_NOT_AUTH 1
+#define DEBUG_NOT_AUTH 0
 
 #include <string>
 #include <vector>

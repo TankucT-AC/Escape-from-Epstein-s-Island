@@ -12,6 +12,7 @@ set(SOURCE_FILES
     controllers/AuthController.cc
     controllers/DatabaseManager.cc
     controllers/TOTPGenerator.cc
+    plugins/qrcodegen.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -20,6 +21,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     ${CMAKE_CURRENT_SOURCE_DIR}/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugins
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 

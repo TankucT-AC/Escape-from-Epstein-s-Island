@@ -58,3 +58,9 @@ target_link_libraries(game PRIVATE
     OpenSSL::Crypto
     pthread
 )
+
+option(BUILD_TESTS "Build tests" ON)                                                                                                                                                       
+if(BUILD_TESTS)                                                                                                                                                                             
+    enable_testing()                                                                                                                                                                        
+    add_subdirectory(tests)                                                                                                                                                                 
+endif() 

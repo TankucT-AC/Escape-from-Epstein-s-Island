@@ -7,7 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include "Bullet.hpp"
 #include "Entity.hpp"
-#include "config.hpp"
+#include "src/core/config.hpp"
 
 class Enemy : public Entity
 {

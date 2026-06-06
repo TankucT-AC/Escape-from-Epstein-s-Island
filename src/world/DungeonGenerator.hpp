@@ -4,7 +4,7 @@
 #ifndef DUNGEON_GENERATOR_HPP
 #define DUNGEON_GENERATOR_HPP
 
-#include "BSPTree.hpp"
+#include "src/world/BSPTree.hpp"
 #include "Room.hpp"
 
 struct DungeonData 

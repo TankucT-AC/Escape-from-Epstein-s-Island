@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "Room.hpp"
-#include "config.hpp"
+#include "src/core/config.hpp"
 
 Room::Room(const std::vector<std::vector<int>>& InitBlueprint, 
         sf::Vector2<float> InitPos, ResourceManager& rm)

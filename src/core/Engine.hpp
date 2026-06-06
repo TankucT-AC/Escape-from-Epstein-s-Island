@@ -15,12 +15,12 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <memory>
 #include <vector>
-#include "Player.hpp"
-#include "Bullet.hpp"
-#include "Enemy.hpp"
+#include "src/game/Player.hpp"
+#include "src/game/Bullet.hpp"
+#include "src/game/Enemy.hpp"
 #include "ResourceManager.hpp"
-#include "Room.hpp"
-#include "DungeonGenerator.hpp"
+#include "src/world/Room.hpp"
+#include "src/world/DungeonGenerator.hpp"
 
 class Engine
 {

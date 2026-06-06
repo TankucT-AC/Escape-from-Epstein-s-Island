@@ -10,7 +10,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "UpdateContext.hpp"
+#include "src/core/UpdateContext.hpp"
 
 // Абстракный класс для сущностей
 class Entity 

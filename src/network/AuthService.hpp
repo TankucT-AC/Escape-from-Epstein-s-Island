@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "AuthClient.hpp"
-#include "UIComponents.hpp"
+#include "src/UI/UIComponents.hpp"
 
 class AuthService {
 public:

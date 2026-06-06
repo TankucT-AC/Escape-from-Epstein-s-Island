@@ -4,9 +4,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "Entity.hpp"
-#include "UpdateContext.hpp"
-#include "config.hpp"
+#include "src/game/Entity.hpp"
+#include "src/core/UpdateContext.hpp"
+#include "src/core/config.hpp"
 
 class Player : public Entity
 {

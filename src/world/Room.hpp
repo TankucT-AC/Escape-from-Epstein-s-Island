@@ -4,8 +4,8 @@
 #ifndef ROOM_HPP
 #define ROOM_HPP
 
-#include "ResourceManager.hpp"
-#include "Wall.hpp"
+#include "src/core/ResourceManager.hpp"
+#include "src/world/Wall.hpp"
 #include <memory>
 
 enum class RoomElements

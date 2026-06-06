@@ -1,6 +1,6 @@
-#include "AuthService.hpp"
+#include "src/network/AuthService.hpp"
 #include <iostream>
-#include <cctype> // Добавлено для std::isdigit
+#include <cctype> 
 
 AuthService::AuthService(AuthClient& c) : client(c) {
     sf::ContextSettings settings;

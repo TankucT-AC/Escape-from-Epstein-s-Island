@@ -1,8 +1,8 @@
 // Copyright (C) 2026 Magomed Gadzhiumarov
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "Engine.hpp"
-#include "Bullet.hpp"
+#include "src/core/Engine.hpp"
+#include "src/game/Bullet.hpp"
 #include "UpdateContext.hpp"
 #include "config.hpp"
 #include <cmath>

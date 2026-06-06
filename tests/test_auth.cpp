@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <memory>
-#include "../include/AuthClient.hpp"
-#include "../include/httplib.h"
+#include "src/network/AuthClient.hpp"
+#include "third-party/cpp-httplib/httplib.h"
 
 using ::testing::_;
 using ::testing::Return;
@@ -41,7 +41,6 @@ static httplib::Result make_network_error() {
 TEST_F(AuthClientTest, LoginSuccess) {
     std::string json = R"({"status":"success","password":"secret"})";
     
-    // 3. Используем ByMove, так как Result нельзя скопировать
     EXPECT_CALL(*mock_client_, Post("/api/login", _, "application/json"))
         .WillOnce(Return(ByMove(make_response(200, json))));
 

@@ -4,7 +4,7 @@
 #ifndef WALL_HPP
 #define WALL_HPP
 
-#include "Entity.hpp"
+#include "src/game/Entity.hpp"
 
 class Wall : public Entity
 {

@@ -1,11 +1,11 @@
 // Copyright (C) 2026 Magomed Gadzhiumarov
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "Engine.hpp"
-#include "AuthClient.hpp"
-#include "AuthService.hpp"
+#include "src/core/Engine.hpp"
+#include "src/network/AuthClient.hpp"
+#include "src/network/AuthService.hpp"
 #include <iostream>
-#include "config.hpp"
+#include "src/core/config.hpp"
 
 int main() {
     try {

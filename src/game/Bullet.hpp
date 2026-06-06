@@ -5,8 +5,8 @@
 #define BULLET_HPP
 
 #include "Entity.hpp"
-#include "UpdateContext.hpp"
-#include "config.hpp"
+#include "src/core/UpdateContext.hpp"
+#include "src/core/config.hpp"
 
 class Bullet : public Entity
 {

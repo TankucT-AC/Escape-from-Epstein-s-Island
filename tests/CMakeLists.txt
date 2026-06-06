@@ -14,10 +14,11 @@ add_executable(test_auth
 )
 
 target_include_directories(test_auth PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}
     ${OPENSSL_INCLUDE_DIR}
 )
 target_link_libraries(test_auth PRIVATE
+    game_core
     gtest
     gtest_main
     gmock

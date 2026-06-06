@@ -4,9 +4,9 @@
 #ifndef AUTH_CLIENT_HPP 
 #define AUTH_CLIENT_HPP 
  
-#include "config.hpp" 
+#include "src/core/config.hpp" 
 #define CPPHTTPLIB_OPENSSL_SUPPORT 
-#include "httplib.h" 
+#include "third-party/cpp-httplib/httplib.h" 
 #include <nlohmann/json.hpp> 
 #include <openssl/err.h> 
 #include <string> 

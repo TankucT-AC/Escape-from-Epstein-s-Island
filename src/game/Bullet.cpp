@@ -4,7 +4,7 @@
 #include "Bullet.hpp"
 #include <SFML/System/Time.hpp>
 #include <cmath>
-#include "UpdateContext.hpp"
+#include "src/core/UpdateContext.hpp"
 
 
 Bullet::Bullet(const sf::Texture& InitTexture, 

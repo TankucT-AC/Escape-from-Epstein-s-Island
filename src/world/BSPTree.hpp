@@ -7,7 +7,7 @@
 #include <memory>
 #include <random>
 #include <SFML/Graphics/Rect.hpp>
-#include "config.hpp"
+#include "src/core/config.hpp"
 
 class BSPNode 
 {

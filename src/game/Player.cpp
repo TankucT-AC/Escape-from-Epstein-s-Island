@@ -5,8 +5,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
-#include "UpdateContext.hpp"
-#include "Room.hpp"
+#include "src/core/UpdateContext.hpp"
+#include "src/world/Room.hpp"
 
 Player::Player(const sf::Texture& InitTexture, 
     sf::Vector2<float> InitPos,

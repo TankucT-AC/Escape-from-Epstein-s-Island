@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(2DGame)
 
@@ -10,45 +10,64 @@ find_package(OpenSSL REQUIRED)
 find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio network)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/SFML)
 
-set(SOURCES
-    src/main.cpp
-    src/Engine.cpp
-    src/Player.cpp
-    src/Bullet.cpp
-    src/Enemy.cpp
-    src/Room.cpp
-    src/Wall.cpp
-    src/AuthService.cpp
-    src/BSPTree.cpp
+add_library(game_core STATIC
+    src/core/config.hpp
 )
 
-set(HEADERS
-    include/config.hpp
-    include/Engine.hpp
-    include/Player.hpp
-    include/Bullet.hpp
-    include/ResourceManager.hpp
-    include/Entity.hpp
-    include/Enemy.hpp
-    include/Room.hpp
-    include/UpdateContext.hpp
-    include/Wall.hpp
-    include/AuthClient.hpp
-    include/AuthService.hpp
-    include/UIComponents.hpp
-    include/httplib.h
-    include/BSPTree.hpp
-    include/DungeonGenerator.hpp
+# Core
+target_sources(game_core PRIVATE
+    src/core/Engine.hpp
+    src/core/Engine.cpp
+    src/core/UpdateContext.hpp
+    src/core/ResourceManager.hpp
 )
 
-add_executable(game ${SOURCES} ${HEADERS})
+# Game
+target_sources(game_core PRIVATE
+    src/game/Bullet.hpp
+    src/game/Bullet.cpp
+    src/game/Enemy.hpp 
+    src/game/Enemy.cpp 
+    src/game/Entity.hpp 
+    src/game/Player.hpp 
+    src/game/Player.cpp 
+)
 
-target_include_directories(game PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+# Network
+target_sources(game_core PRIVATE 
+    src/network/AuthClient.hpp 
+    src/network/AuthService.hpp 
+    src/network/AuthService.cpp     
+)
+
+# UI
+target_sources(game_core PRIVATE 
+    src/UI/UIComponents.hpp 
+)
+
+
+# World
+target_sources(game_core PRIVATE 
+    src/world/BSPTree.hpp 
+    src/world/BSPTree.cpp 
+    src/world/DungeonGenerator.hpp 
+    src/world/Room.hpp 
+    src/world/Room.cpp 
+    src/world/Wall.hpp
+    src/world/Wall.cpp
+)
+
+# third-party
+target_sources(game_core PRIVATE
+    third-party/cpp-httplib/httplib.h
+)
+
+target_include_directories(game_core PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/
     ${OPENSSL_INCLUDE_DIR}
 )
 
-target_link_libraries(game PRIVATE
+target_link_libraries(game_core PUBLIC
     sfml-graphics
     sfml-window
     sfml-system
@@ -58,6 +77,9 @@ target_link_libraries(game PRIVATE
     OpenSSL::Crypto
     pthread
 )
+
+add_executable(game src/main.cpp)
+target_link_libraries(game PRIVATE game_core)
 
 option(BUILD_TESTS "Build tests" ON)                                                                                                                                                       
 if(BUILD_TESTS)                                                                                                                                                                             

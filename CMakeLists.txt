@@ -26,33 +26,33 @@ target_sources(game_core PRIVATE
 target_sources(game_core PRIVATE
     src/game/Bullet.hpp
     src/game/Bullet.cpp
-    src/game/Enemy.hpp 
-    src/game/Enemy.cpp 
-    src/game/Entity.hpp 
-    src/game/Player.hpp 
-    src/game/Player.cpp 
+    src/game/Enemy.hpp
+    src/game/Enemy.cpp
+    src/game/Entity.hpp
+    src/game/Player.hpp
+    src/game/Player.cpp
 )
 
 # Network
-target_sources(game_core PRIVATE 
-    src/network/AuthClient.hpp 
-    src/network/AuthService.hpp 
-    src/network/AuthService.cpp     
+target_sources(game_core PRIVATE
+    src/network/AuthClient.hpp
+    src/network/AuthService.hpp
+    src/network/AuthService.cpp
 )
 
 # UI
-target_sources(game_core PRIVATE 
-    src/UI/UIComponents.hpp 
+target_sources(game_core PRIVATE
+    src/UI/UIComponents.hpp
 )
 
 
 # World
-target_sources(game_core PRIVATE 
-    src/world/BSPTree.hpp 
-    src/world/BSPTree.cpp 
-    src/world/DungeonGenerator.hpp 
-    src/world/Room.hpp 
-    src/world/Room.cpp 
+target_sources(game_core PRIVATE
+    src/world/BSPTree.hpp
+    src/world/BSPTree.cpp
+    src/world/DungeonGenerator.hpp
+    src/world/Room.hpp
+    src/world/Room.cpp
     src/world/Wall.hpp
     src/world/Wall.cpp
 )
@@ -81,8 +81,14 @@ target_link_libraries(game_core PUBLIC
 add_executable(game src/main.cpp)
 target_link_libraries(game PRIVATE game_core)
 
-option(BUILD_TESTS "Build tests" ON)                                                                                                                                                       
-if(BUILD_TESTS)                                                                                                                                                                             
-    enable_testing()                                                                                                                                                                        
-    add_subdirectory(tests)                                                                                                                                                                 
-endif() 
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
+add_custom_command(TARGET game_core POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+    "$<TARGET_FILE_DIR:game_core>/assets"
+)

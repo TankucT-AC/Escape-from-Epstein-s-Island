@@ -5,35 +5,33 @@
 #define TOTP_GENERATOR_H
 
 #include <cstddef>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
 #include <string>
 #include <vector>
-#include <openssl/hmac.h>
-#include <openssl/evp.h>
 
-class TOTPGenerator 
-{
+class TOTPGenerator {
 private:
-    const EVP_MD* getHashAlgorithm(const std::string& crypto);
-    
+  const EVP_MD *getHashAlgorithm(const std::string &crypto);
+
 public:
-    std::string generate(const std::string& key,
-                        std::string time,
-                        const std::string& returnDigits,
-                        const std::string& crypto);
-    
-    std::string generate(const std::vector<unsigned char>& key_bytes,
-                        std::string time,
-                        const std::string& returnDigits,
-                        const std::string& crypto);
+  std::string generate(const std::string &key, std::string time,
+                       const std::string &returnDigits,
+                       const std::string &crypto);
 
-    std::string base32Encode(const std::vector<unsigned char>& data);
-    std::vector<unsigned char> base32Decode(const std::string& data);
+  std::string generate(const std::vector<unsigned char> &key_bytes,
+                       std::string time, const std::string &returnDigits,
+                       const std::string &crypto);
 
-    std::string generateTOTPSecret(size_t keyLengthBytes = 20);
+  std::string base32Encode(const std::vector<unsigned char> &data);
+  std::vector<unsigned char> base32Decode(const std::string &data);
 
-    std::string passHash(const std::string& password, const std::string& crypto = "HmacSHA256");
-    std::string generateRandomPass() noexcept;
-    std::string getHexUnixTime(unsigned long long unix_time);
+  std::string generateTOTPSecret(size_t keyLengthBytes = 20);
+
+  std::string passHash(const std::string &password,
+                       const std::string &crypto = "HmacSHA256");
+  std::string generateRandomPass() noexcept;
+  std::string getHexUnixTime(unsigned long long unix_time);
 };
 
 #endif

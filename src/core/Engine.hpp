@@ -4,6 +4,12 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
+#include "ResourceManager.hpp"
+#include "src/game/Bullet.hpp"
+#include "src/game/Enemy.hpp"
+#include "src/game/Player.hpp"
+#include "src/world/DungeonGenerator.hpp"
+#include "src/world/Room.hpp"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -15,36 +21,30 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <memory>
 #include <vector>
-#include "src/game/Player.hpp"
-#include "src/game/Bullet.hpp"
-#include "src/game/Enemy.hpp"
-#include "ResourceManager.hpp"
-#include "src/world/Room.hpp"
-#include "src/world/DungeonGenerator.hpp"
 
-class Engine
-{
+class Engine {
 private:
-    std::unique_ptr<sf::RenderWindow> EngineWindow;
-    sf::VideoMode EngineVideoMode;
-    sf::Event EngineEvent;
-    sf::Clock EngineClock;
-    sf::View EngineCamera;
-    ResourceManager resourceManager;
-    Player player;
-    std::vector<std::unique_ptr<Enemy>> enemies;
-    std::vector<std::unique_ptr<Bullet>> bullets;
-    
-    DungeonGenerator dungeonGenerator; 
-    std::unique_ptr<Room> room;
+  std::unique_ptr<sf::RenderWindow> EngineWindow;
+  sf::VideoMode EngineVideoMode;
+  sf::Event EngineEvent;
+  sf::Clock EngineClock;
+  sf::View EngineCamera;
+  ResourceManager resourceManager;
+  Player player;
+  std::vector<std::unique_ptr<Enemy>> enemies;
+  std::vector<std::unique_ptr<Bullet>> bullets;
+
+  DungeonGenerator dungeonGenerator;
+  std::unique_ptr<Room> room;
+
 public:
-    Engine();
+  Engine();
 
-    void run();
+  void run();
 
-    void render();
+  void render();
 
-    void update(const sf::Time& dt);
+  void update(const sf::Time &dt);
 };
 
 #endif

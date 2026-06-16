@@ -2,3 +2,6 @@
 .cache
 build
 .aider*
+out
+.clang*
+compile_commands.json

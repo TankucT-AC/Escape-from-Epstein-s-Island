@@ -4,32 +4,31 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "src/game/Entity.hpp"
 #include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
+#include "src/game/Entity.hpp"
 
-class Player : public Entity
-{
+class Player : public Entity {
 private:
-    float ShootTime;
-    float ShootDelay;
+  float ShootTime;
+  float ShootDelay;
+
 public:
-    Player(const sf::Texture& InitTexture, 
-        sf::Vector2<float> InitPos,
-        float InitSpeed = config::PLAYER_DEFAULT_SPEED, 
-        float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY
-    );
+  Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
+         float InitSpeed = config::PLAYER_DEFAULT_SPEED,
+         float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY);
 
-    virtual void move(const sf::Time& dt, const sf::Vector2<float>& offset) override;
-    virtual void update(const UpdateContext& ctx) override;
-    virtual void draw(sf::RenderWindow& window) override;
-    virtual sf::Rect<float> getHitbox() const override;
+  virtual void move(const sf::Time &dt,
+                    const sf::Vector2<float> &offset) override;
+  virtual void update(const UpdateContext &ctx) override;
+  virtual void draw(sf::RenderWindow &window) override;
+  virtual sf::Rect<float> getHitbox() const override;
 
-    virtual void moveShootTime(const sf::Time& dt);
-    virtual bool isShootTime() const;
-    virtual void cooldown();
+  virtual void moveShootTime(const sf::Time &dt);
+  virtual bool isShootTime() const;
+  virtual void cooldown();
 
-    void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
+  void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
 };
 
 #endif

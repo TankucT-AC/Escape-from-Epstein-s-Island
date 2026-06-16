@@ -11,26 +11,23 @@
 
 class ResourceManager {
 private:
-    std::map<std::string, sf::Texture> textures;
+  std::map<std::string, sf::Texture> textures;
 
 public:
-    sf::Texture& getTexture(const std::string& path) 
-    {
-        auto it = textures.find(path);
-        if (it != textures.end()) 
-        {
-            return it->second;
-        }
-
-        sf::Texture tex;
-        if (!tex.loadFromFile(path)) 
-        {
-            throw std::runtime_error("Image is not found");
-        }
-        
-        textures[path] = std::move(tex);
-        return textures[path];
+  sf::Texture &getTexture(const std::string &path) {
+    auto it = textures.find(path);
+    if (it != textures.end()) {
+      return it->second;
     }
+
+    sf::Texture tex;
+    if (!tex.loadFromFile(path)) {
+      throw std::runtime_error("Image is not found");
+    }
+
+    textures[path] = std::move(tex);
+    return textures[path];
+  }
 };
 
 #endif

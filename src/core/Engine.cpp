@@ -61,6 +61,13 @@ void Engine::update(const sf::Time &dt) {
   while (EngineWindow->pollEvent(EngineEvent)) {
     if (EngineEvent.type == sf::Event::Closed)
       EngineWindow->close();
+
+    if (EngineEvent.type == sf::Event::Resized) {
+      auto newWidth = static_cast<float>(EngineEvent.size.width);
+      auto newHeight = static_cast<float>(EngineEvent.size.height);
+
+      EngineCamera.setSize(newWidth, newHeight);
+    }
   }
 
   player.update(UpdateContext(dt, *EngineWindow, *room));

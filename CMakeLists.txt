@@ -20,6 +20,8 @@ target_sources(game_core PRIVATE
     src/core/Engine.cpp
     src/core/UpdateContext.hpp
     src/core/ResourceManager.hpp
+    src/core/InputManager.hpp
+    src/core/InputManager.cpp
 )
 
 # Game

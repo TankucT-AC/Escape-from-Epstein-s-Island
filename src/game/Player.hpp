@@ -4,9 +4,16 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include "Bullet.hpp"
+#include "src/core/ResourceManager.hpp"
 #include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
 #include "src/game/Entity.hpp"
+#include <memory>
+#include <vector>
+
+// Forward-ссылка на PlayerInputState
+struct PlayerInputState;
 
 class Player : public Entity {
 private:
@@ -29,6 +36,8 @@ public:
   virtual void cooldown();
 
   void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
+  void handlePlayer(const PlayerInputState &input, ResourceManager &rm,
+                    std::vector<std::unique_ptr<Bullet>> &bullets);
 };
 
 #endif

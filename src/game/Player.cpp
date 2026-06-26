@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "Player.hpp"
+#include "src/core/InputManager.hpp"
+#include "src/core/ResourceManager.hpp"
 #include "src/core/UpdateContext.hpp"
 #include "src/world/Room.hpp"
 #include <SFML/Window/Keyboard.hpp>
@@ -93,3 +95,24 @@ sf::Rect<float> Player::getHitbox() const {
 }
 
 void Player::cooldown() { ShootTime = ShootDelay; }
+
+void Player::handlePlayer(const PlayerInputState &input, ResourceManager &rm,
+                          std::vector<std::unique_ptr<Bullet>> &bullets) {
+  if (input.wantToShoot && this->isShootTime()) {
+    // Задаем вектор для пули
+    sf::Vector2<float> dir = input.mousePos - this->getPosition();
+
+    // Нормализуем вектор
+    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+    if (len > 0)
+      dir /= len;
+    auto radians = static_cast<float>(std::atan2(dir.y, dir.x));
+    auto degrees = radians * 180.f / config::PI;
+
+    // Добавляем пулю в массив
+    bullets.push_back(
+        std::make_unique<Bullet>(rm.getTexture(config::BULLET_PLAYER_TEXTURE),
+                                 this->getPosition(), dir, degrees));
+    this->cooldown();
+  }
+}

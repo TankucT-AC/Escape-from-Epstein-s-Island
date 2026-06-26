@@ -12,7 +12,7 @@ Bullet::Bullet(const sf::Texture &InitTexture,
                float InitSpeed, float InitLifetime, float InitDamage)
     : Entity(InitTexture, InitSpeed, InitStartPos), direction(InitDirection),
       lifetime(InitLifetime), damage(InitDamage), dead(false) {
-  sf::FloatRect b = sprite.getLocalBounds();
+  sf::Rect<float> b = sprite.getLocalBounds();
   sprite.setOrigin(b.width / 2.f, b.height / 2.f);
   sprite.setScale(0.5f, 0.5f);
   sprite.setRotation(InitDegree);
@@ -33,7 +33,7 @@ void Bullet::draw(sf::RenderWindow &window) {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
-  sf::FloatRect hb = this->getHitbox();
+  sf::Rect<float> hb = this->getHitbox();
   sf::RectangleShape debugRect({hb.width, hb.height});
   debugRect.setPosition(hb.left, hb.top);
   debugRect.setFillColor(sf::Color::Transparent);

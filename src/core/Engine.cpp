@@ -4,6 +4,7 @@
 #include "src/core/Engine.hpp"
 #include "UpdateContext.hpp"
 #include "config.hpp"
+#include "src/core/InputManager.hpp"
 #include "src/game/Bullet.hpp"
 #include <cmath>
 #include <memory>
@@ -58,17 +59,7 @@ void Engine::render() {
 }
 
 void Engine::update(const sf::Time &dt) {
-  while (EngineWindow->pollEvent(EngineEvent)) {
-    if (EngineEvent.type == sf::Event::Closed)
-      EngineWindow->close();
-
-    if (EngineEvent.type == sf::Event::Resized) {
-      auto newWidth = static_cast<float>(EngineEvent.size.width);
-      auto newHeight = static_cast<float>(EngineEvent.size.height);
-
-      EngineCamera.setSize(newWidth, newHeight);
-    }
-  }
+  EngineInput.pollEvents(*EngineWindow, EngineEvent, EngineCamera);
 
   player.update(UpdateContext(dt, *EngineWindow, *room));
   player.moveShootTime(dt);
@@ -108,30 +99,9 @@ void Engine::update(const sf::Time &dt) {
     enemy->update(dt, player.getPosition(), *EngineWindow);
   }
 
-  if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player.isShootTime()) {
-    // Задаем вектор для пули
-    sf::Vector2<float> mousePos =
-        EngineWindow->mapPixelToCoords(sf::Mouse::getPosition(*EngineWindow));
-    sf::Vector2<float> dir = mousePos - player.getPosition();
+  PlayerInputState state =
+      EngineInput.getPlayerInput(*EngineWindow, player, resourceManager);
+  player.handlePlayer(state, resourceManager, bullets);
 
-    // Нормализуем вектор
-    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-    if (len > 0)
-      dir /= len;
-
-    auto radians = static_cast<float>(std::atan2(dir.y, dir.x));
-
-    auto degrees = radians * 180.f / config::PI;
-
-    // Добавляем пулю в массив
-    bullets.push_back(std::make_unique<Bullet>(
-        resourceManager.getTexture(config::BULLET_PLAYER_TEXTURE),
-        player.getPosition(), dir, degrees));
-
-    // Вешаем КД на игрока
-    player.cooldown();
-  }
-
-  // Центрируем камеру относительно игрока
   EngineCamera.setCenter(player.getPosition());
 }

@@ -4,6 +4,7 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
+#include "InputManager.hpp"
 #include "ResourceManager.hpp"
 #include "src/game/Bullet.hpp"
 #include "src/game/Enemy.hpp"
@@ -30,6 +31,7 @@ private:
   sf::Clock EngineClock;
   sf::View EngineCamera;
   ResourceManager resourceManager;
+  InputManager EngineInput;
   Player player;
   std::vector<std::unique_ptr<Enemy>> enemies;
   std::vector<std::unique_ptr<Bullet>> bullets;

@@ -74,35 +74,39 @@
 
 ```
 .
-├── include/
-│   ├── BSPTree.hpp          # Бинарное дерево разбиения пространства
-│   ├── Bullet.hpp           # Класс пули
-│   ├── DungeonGenerator.hpp # Генератор подземелий
-│   ├── Enemy.hpp            # Вражеский персонаж
-│   ├── Engine.hpp           # Главный игровой движок
-│   ├── Entity.hpp           # Базовый класс всех объектов
-│   ├── Player.hpp           # Игрок
-│   ├── ResourceManager.hpp  # Менеджер ресурсов (текстуры)
-│   ├── Room.hpp             # Комната (стены и коллизии)
-│   ├── UpdateContext.hpp    # Контекст обновления
-│   ├── Wall.hpp             # Стена
-│   └── httplib.h            # Встроенная HTTP‑библиотека
-│
 ├── src/
-│   ├── BSPTree.cpp
-│   ├── Bullet.cpp
-│   ├── Enemy.cpp
-│   ├── Engine.cpp
-│   ├── Player.cpp
-│   ├── Room.cpp
-│   └── Wall.cpp
-│
-├── assets/                  # (не показано, но предполагается)
+│   ├── core/
+│   │   ├── ResourceManager.hpp
+│   │   └── UpdateContext.hpp
+│   ├── game/
+│   │   ├── Bullet.cpp
+│   │   ├── Bullet.hpp
+│   │   ├── Enemy.cpp
+│   │   ├── Enemy.hpp
+│   │   ├── Engine.cpp
+│   │   ├── Engine.hpp
+│   │   ├── Entity.hpp
+│   │   ├── Player.cpp
+│   │   ├── Player.hpp
+│   │   ├── Wall.cpp
+│   │   └── Wall.hpp
+│   └── world/
+│       ├── BSPTree.cpp
+│       ├── BSPTree.hpp
+│       ├── DungeonGenerator.hpp
+│       ├── Room.cpp
+│       └── Room.hpp
+├── server/
+│   └── controllers/
+│       ├── DatabaseManager.cc
+│       └── TOTPGenerator.cc
+├── third-party/
+│   └── cpp-httplib/
+│       └── httplib.h
+├── assets/
 │   ├── textures/
 │   └── ...
-│
-├── config.hpp               # Игровые константы (скорости, тайминги и т.д.)
-├── CMakeLists.txt           # Сборочная система CMake
+├── CMakeLists.txt
 └── README.md
 ```
 

@@ -11,12 +11,11 @@
 
 Engine::Engine()
     : player(resourceManager.getTexture(config::PLAYER_TEXTURE),
-             sf::Vector2<float>{0.f, 0.f}) {
-  EngineVideoMode.height = config::GAMEBOARD_HEIGHT;
-  EngineVideoMode.width = config::GAMEBOARD_WIDTH;
-  EngineWindow = std::make_unique<sf::RenderWindow>(EngineVideoMode,
-                                                    config::GAMEBOARD_NAME);
-
+             sf::Vector2<float>{0.f, 0.f}),
+      EngineVideoMode(config::GAMEBOARD_WIDTH, config::GAMEBOARD_HEIGHT),
+      EngineWindow(std::make_unique<sf::RenderWindow>(EngineVideoMode,
+                                                      config::GAMEBOARD_NAME)),
+      EngineRender(*EngineWindow) {
   DungeonData dungeon = dungeonGenerator.generateDungeon(40, 40, 4, 10, 5);
 
   room = std::make_unique<Room>(dungeon.grid, sf::Vector2<float>(0.f, 0.f),
@@ -41,21 +40,15 @@ void Engine::run() {
 }
 
 void Engine::render() {
-  EngineWindow->setView(EngineCamera);
-  EngineWindow->clear();
+  EngineRender.setCamera(EngineCamera);
+  EngineRender.clear();
 
-  room->draw(*EngineWindow);
+  EngineRender.drawRoom(*room);
+  EngineRender.drawEntity(player);
+  EngineRender.drawEnemies(enemies);
+  EngineRender.drawBullets(bullets);
 
-  player.draw(*EngineWindow);
-  for (const auto &enemy : enemies) {
-    enemy->draw(*EngineWindow);
-  }
-
-  for (const auto &bullet : bullets) {
-    bullet->draw(*EngineWindow);
-  }
-
-  EngineWindow->display();
+  EngineRender.display();
 }
 
 void Engine::update(const sf::Time &dt) {

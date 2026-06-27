@@ -5,6 +5,7 @@
 #define ENGINE_HPP
 
 #include "InputManager.hpp"
+#include "RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "src/game/Bullet.hpp"
 #include "src/game/Enemy.hpp"
@@ -25,13 +26,14 @@
 
 class Engine {
 private:
-  std::unique_ptr<sf::RenderWindow> EngineWindow;
   sf::VideoMode EngineVideoMode;
+  std::unique_ptr<sf::RenderWindow> EngineWindow;
   sf::Event EngineEvent;
   sf::Clock EngineClock;
   sf::View EngineCamera;
   ResourceManager resourceManager;
   InputManager EngineInput;
+  RenderManager EngineRender;
   Player player;
   std::vector<std::unique_ptr<Enemy>> enemies;
   std::vector<std::unique_ptr<Bullet>> bullets;

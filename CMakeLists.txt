@@ -24,6 +24,8 @@ target_sources(game_core PRIVATE
     src/core/InputManager.cpp
     src/core/RenderManager.hpp
     src/core/RenderManager.cpp
+    src/core/PhysicsManager.hpp
+    src/core/PhysicsManager.cpp
 )
 
 # Game

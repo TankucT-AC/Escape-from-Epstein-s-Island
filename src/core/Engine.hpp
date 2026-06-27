@@ -5,6 +5,7 @@
 #define ENGINE_HPP
 
 #include "InputManager.hpp"
+#include "PhysicsManager.hpp"
 #include "RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "src/game/Bullet.hpp"
@@ -34,6 +35,7 @@ private:
   ResourceManager resourceManager;
   InputManager EngineInput;
   RenderManager EngineRender;
+  PhysicsManager EnginePhysics;
   Player player;
   std::vector<std::unique_ptr<Enemy>> enemies;
   std::vector<std::unique_ptr<Bullet>> bullets;

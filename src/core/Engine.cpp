@@ -59,38 +59,12 @@ void Engine::update(const sf::Time &dt) {
   for (const auto &bullet : bullets) {
     bullet->update(UpdateContext(dt, *EngineWindow, *room));
   }
-
-  // Удаляем пули, срок жизни которых закончился
-  bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-                               [](const auto &bullet) {
-                                 return !bullet->isBulletAlive();
-                               }),
-                bullets.end());
-
-  for (const auto &bullet : bullets) {
-    if (!bullet->isBulletAlive())
-      continue;
-    // Наносим урон противнику
-    for (const auto &enemy : enemies) {
-      if (enemy->isBulletCollision(*bullet)) {
-        enemy->getReceivedDamage(bullet->getDamage());
-        bullet->setBulletAlive(false);
-      }
-    }
-
-    // Проверка пули на то что она столкнулась со стеной
-    if (room->checkCollision(*bullet))
-      bullet->setBulletAlive(false);
-  }
-
-  enemies.erase(
-      std::remove_if(enemies.begin(), enemies.end(),
-                     [](const auto &enemy) { return !enemy->isEnemyAlive(); }),
-      enemies.end());
-
   for (const auto &enemy : enemies) {
     enemy->update(dt, player.getPosition(), *EngineWindow);
   }
+
+  EnginePhysics.handleCollisions(bullets, enemies, *room);
+  EnginePhysics.cleanup(bullets, enemies, *room);
 
   PlayerInputState state =
       EngineInput.getPlayerInput(*EngineWindow, player, resourceManager);

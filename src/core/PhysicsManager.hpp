@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Magomed Gadzhiumarov
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef PHYSICS_MANAGER_HPP
 #define PHYSICS_MANAGER_HPP
 

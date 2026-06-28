@@ -16,7 +16,7 @@ Engine::Engine()
       EngineWindow(std::make_unique<sf::RenderWindow>(EngineVideoMode,
                                                       config::GAMEBOARD_NAME)),
       EngineRender(*EngineWindow) {
-  DungeonData dungeon = dungeonGenerator.generateDungeon(40, 40, 4, 10, 5);
+  DungeonData dungeon = dungeonGenerator.generateDungeon(60, 60, 4, 15, 7);
 
   room = std::make_unique<Room>(dungeon.grid, sf::Vector2<float>(0.f, 0.f),
                                 resourceManager);
@@ -33,7 +33,7 @@ Engine::Engine()
 
 void Engine::run() {
   while (EngineWindow->isOpen()) {
-    auto dt = EngineClock.restart();
+    sf::Time dt = EngineClock.restart();
     this->update(dt);
     this->render();
   }

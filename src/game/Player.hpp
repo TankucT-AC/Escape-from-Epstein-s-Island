@@ -15,7 +15,7 @@
 // Forward-ссылка на PlayerInputState
 struct PlayerInputState;
 
-class Player : public Entity {
+class Player : public Entity, public IDamageAble {
 private:
   float ShootTime;
   float ShootDelay;
@@ -38,6 +38,9 @@ public:
   void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
   void handlePlayer(const PlayerInputState &input, ResourceManager &rm,
                     std::vector<std::unique_ptr<Bullet>> &bullets);
+
+  virtual void takeDamage(float amount) override {}
+  virtual float getHealth() override { return 0.f; }
 };
 
 #endif

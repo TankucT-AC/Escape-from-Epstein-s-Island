@@ -12,6 +12,17 @@
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 
+class IDamageAble {
+public:
+  virtual void takeDamage(float amount) = 0;
+  virtual float getHealth() = 0;
+};
+
+class IDamageDealer {
+public:
+  virtual float getDamage() = 0;
+};
+
 // Абстракный класс для сущностей
 class Entity {
 protected:
@@ -24,7 +35,7 @@ public:
       : sprite(InitTexture), speed(InitSpeed) {
     sprite.setPosition(InitPos);
 
-    auto bounds = sprite.getLocalBounds();
+    sf::Rect<float> bounds = sprite.getLocalBounds();
     sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
   }
   virtual ~Entity() = default;
@@ -44,4 +55,4 @@ public:
   };
 };
 
-#endif
+#endif // ENTITY_HPP

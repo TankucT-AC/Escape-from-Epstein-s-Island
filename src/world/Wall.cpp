@@ -14,7 +14,7 @@ void Wall::draw(sf::RenderWindow &window) {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
-  sf::FloatRect hb = this->getHitbox();
+  sf::Rect<float> hb = this->getHitbox();
   sf::RectangleShape debugRect({hb.width, hb.height});
   debugRect.setPosition(hb.left, hb.top);
   debugRect.setFillColor(sf::Color::Transparent);

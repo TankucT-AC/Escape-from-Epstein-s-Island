@@ -9,7 +9,7 @@
 #include "src/core/config.hpp"
 #include <SFML/System/Vector2.hpp>
 
-class Enemy : public Entity {
+class Enemy : public Entity, public IDamageAble {
 private:
   float shootTime;
   float shootDelay;
@@ -29,7 +29,9 @@ public:
 
   virtual void update(const sf::Time &dt, const sf::Vector2<float> &playerPos,
                       sf::RenderWindow &window);
-  virtual void getReceivedDamage(float damage);
+  virtual void takeDamage(float amount) override;
+
+  virtual float getHealth() override { return health; }
   bool isEnemyAlive() const { return !dead; }
   bool isBulletCollision(const Bullet &bullet);
 };

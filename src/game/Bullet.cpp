@@ -48,7 +48,7 @@ void Bullet::move(const sf::Time &dt, const sf::Vector2<float> &offset) {
 }
 
 int Bullet::getLifetime() const { return lifetime; }
-float Bullet::getDamage() const { return damage; }
+float Bullet::getDamage() { return damage; }
 bool Bullet::isBulletAlive() const { return !dead; }
 sf::Rect<float> Bullet::getHitbox() const {
   sf::Vector2f pos = sprite.getPosition();

@@ -18,7 +18,6 @@ struct PlayerInputState {
 };
 
 class InputManager {
-private:
 public:
   void pollEvents(sf::RenderWindow &window, sf::Event &event, sf::View &camera);
   PlayerInputState getPlayerInput(sf::RenderWindow &window, Player &player,

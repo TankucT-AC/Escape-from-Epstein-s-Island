@@ -9,7 +9,7 @@ Enemy::Enemy(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
              float InitSpeed, float InitShootDelay, float InitHealth)
     : Entity(InitTexture, InitSpeed, InitPos), shootTime(0.f),
       shootDelay(InitShootDelay), health(InitHealth), dead(false) {
-  auto bounds = sprite.getLocalBounds();
+  sf::Rect<float> bounds = sprite.getLocalBounds();
   sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }
 
@@ -21,7 +21,7 @@ void Enemy::draw(sf::RenderWindow &window) {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
-  sf::FloatRect hb = this->getHitbox();
+  sf::Rect<float> hb = this->getHitbox();
   sf::RectangleShape debugRect({hb.width, hb.height});
   debugRect.setPosition(hb.left, hb.top);
   debugRect.setFillColor(sf::Color::Transparent);
@@ -33,7 +33,7 @@ void Enemy::draw(sf::RenderWindow &window) {
 
 void Enemy::update(const sf::Time &dt, const sf::Vector2<float> &playerPos,
                    sf::RenderWindow &window) {
-  auto offset = playerPos - this->getPosition();
+  sf::Vector2<float> offset = playerPos - this->getPosition();
   float len = std::sqrt(offset.x * offset.x + offset.y * offset.y);
   if (len > 0)
     offset /= len;
@@ -42,8 +42,8 @@ void Enemy::update(const sf::Time &dt, const sf::Vector2<float> &playerPos,
   this->move(dt, offset);
 }
 
-void Enemy::getReceivedDamage(float damage) {
-  health -= damage;
+void Enemy::takeDamage(float amount) {
+  health -= amount;
   if (health <= 0) {
     health = 0;
     dead = true;
@@ -51,8 +51,8 @@ void Enemy::getReceivedDamage(float damage) {
 }
 
 bool Enemy::isBulletCollision(const Bullet &bullet) {
-  auto bulletHitbox = bullet.getHitbox();
-  auto enemyHitbox = sprite.getGlobalBounds();
+  sf::Rect<float> bulletHitbox = bullet.getHitbox();
+  sf::Rect<float> enemyHitbox = sprite.getGlobalBounds();
 
   return enemyHitbox.intersects(bulletHitbox);
 }

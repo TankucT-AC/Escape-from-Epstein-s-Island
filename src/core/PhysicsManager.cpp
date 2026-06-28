@@ -13,7 +13,7 @@ void PhysicsManager::handleCollisions(
     // Наносим урон противнику
     for (const auto &enemy : enemies) {
       if (enemy->isBulletCollision(*bullet)) {
-        enemy->getReceivedDamage(bullet->getDamage());
+        enemy->takeDamage(bullet->getDamage());
         bullet->setBulletAlive(false);
       }
     }

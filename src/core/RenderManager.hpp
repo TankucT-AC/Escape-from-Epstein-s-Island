@@ -20,6 +20,7 @@ private:
 
 public:
   explicit RenderManager(sf::RenderWindow &initWindow);
+  ~RenderManager() = default;
   void setCamera(const sf::View &camera);
   void clear();
 

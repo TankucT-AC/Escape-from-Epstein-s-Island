@@ -23,7 +23,7 @@ void Player::draw(sf::RenderWindow &window) {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
-  sf::FloatRect hb = this->getHitbox();
+  sf::Rect<float> hb = this->getHitbox();
   sf::RectangleShape debugRect({hb.width, hb.height});
   debugRect.setPosition(hb.left, hb.top);
   debugRect.setFillColor(sf::Color::Transparent);
@@ -57,7 +57,7 @@ void Player::update(const UpdateContext &ctx) {
       sprite.setPosition(oldPos.x, sprite.getPosition().y);
     }
 
-    sf::Vector2f posAfterX = sprite.getPosition();
+    sf::Vector2<float> posAfterX = sprite.getPosition();
     sprite.move(0.f, offset.y * step);
     if (ctx.room.checkCollision(*this)) {
       sprite.setPosition(posAfterX.x, oldPos.y);

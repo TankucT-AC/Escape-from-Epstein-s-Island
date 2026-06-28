@@ -8,7 +8,7 @@
 #include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
 
-class Bullet : public Entity {
+class Bullet : public Entity, public IDamageDealer {
 private:
   float damage;
   float lifetime;
@@ -29,8 +29,8 @@ public:
   virtual sf::Rect<float> getHitbox() const override;
 
   int getLifetime() const;
-  float getDamage() const;
   bool isBulletAlive() const;
+  virtual float getDamage() override;
 
   void setBulletAlive(bool isAlive) { dead = !isAlive; };
 };

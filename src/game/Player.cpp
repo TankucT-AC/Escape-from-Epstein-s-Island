@@ -5,7 +5,6 @@
 #include "src/core/InputManager.hpp"
 #include "src/core/ResourceManager.hpp"
 #include "src/core/UpdateContext.hpp"
-#include "src/world/Room.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
@@ -13,7 +12,7 @@
 Player::Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
                float InitSpeed, float InitShootDelay)
     : Entity(InitTexture, InitSpeed, InitPos), ShootTime(0.f),
-      ShootDelay(InitShootDelay) {}
+      ShootDelay(InitShootDelay), velocity{0.f, 0.f} {}
 
 void Player::move(const sf::Time &dt, const sf::Vector2<float> &offset) {
   sprite.move(dt.asSeconds() * offset);
@@ -48,21 +47,9 @@ void Player::update(const UpdateContext &ctx) {
   float length = std::sqrt(offset.x * offset.x + offset.y * offset.y);
   if (length > 0) {
     offset /= length;
-
-    float step = speed * ctx.dt.asSeconds();
-    sf::Vector2f oldPos = sprite.getPosition();
-
-    sprite.move(offset.x * step, 0.f);
-    if (ctx.room.checkCollision(*this)) {
-      sprite.setPosition(oldPos.x, sprite.getPosition().y);
-    }
-
-    sf::Vector2<float> posAfterX = sprite.getPosition();
-    sprite.move(0.f, offset.y * step);
-    if (ctx.room.checkCollision(*this)) {
-      sprite.setPosition(posAfterX.x, oldPos.y);
-    }
   }
+
+  velocity = offset * speed;
 
   // вращение игрока в зависимости от позиции мышки
   sf::Vector2<int> mousePos = sf::Mouse::getPosition(ctx.window);

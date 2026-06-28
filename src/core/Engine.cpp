@@ -65,6 +65,7 @@ void Engine::update(const sf::Time &dt) {
 
   EnginePhysics.handleCollisions(bullets, enemies, *room);
   EnginePhysics.cleanup(bullets, enemies, *room);
+  EnginePhysics.checkCollisions(dt, player, *room);
 
   PlayerInputState state =
       EngineInput.getPlayerInput(*EngineWindow, player, resourceManager);

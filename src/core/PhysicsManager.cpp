@@ -4,6 +4,7 @@
 #include "PhysicsManager.hpp"
 #include "src/game/Bullet.hpp"
 #include "src/game/Enemy.hpp"
+#include "src/game/Player.hpp"
 #include "src/world/Room.hpp"
 
 void PhysicsManager::handleCollisions(
@@ -39,4 +40,19 @@ void PhysicsManager::cleanup(std::vector<std::unique_ptr<Bullet>> &bullets,
       std::remove_if(enemies.begin(), enemies.end(),
                      [](const auto &enemy) { return !enemy->isEnemyAlive(); }),
       enemies.end());
+}
+
+void PhysicsManager::checkCollisions(const sf::Time &dt, Player &player,
+                                     Room &room) {
+  sf::Vector2<float> oldPos = player.getPosition();
+
+  player.move(dt, sf::Vector2<float>{player.getVelocity().x, 0.f});
+  if (room.checkCollision(player)) {
+    player.setPosition(sf::Vector2<float>{oldPos.x, player.getPosition().y});
+  }
+
+  player.move(dt, sf::Vector2<float>{0.f, player.getVelocity().y});
+  if (room.checkCollision(player)) {
+    player.setPosition(sf::Vector2<float>{player.getPosition().x, oldPos.y});
+  }
 }

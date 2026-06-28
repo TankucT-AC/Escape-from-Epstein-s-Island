@@ -19,6 +19,7 @@ class Player : public Entity, public IDamageAble {
 private:
   float ShootTime;
   float ShootDelay;
+  sf::Vector2<float> velocity;
 
 public:
   Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
@@ -41,6 +42,9 @@ public:
 
   virtual void takeDamage(float amount) override {}
   virtual float getHealth() override { return 0.f; }
+
+  virtual float getSpeed() const { return speed; }
+  virtual sf::Vector2<float> getVelocity() const { return velocity; }
 };
 
 #endif

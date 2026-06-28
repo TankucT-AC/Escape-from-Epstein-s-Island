@@ -4,9 +4,11 @@
 #ifndef PHYSICS_MANAGER_HPP
 #define PHYSICS_MANAGER_HPP
 
+#include <SFML/System/Clock.hpp>
 #include <memory>
 #include <vector>
 
+class Player;
 class Room;
 class Enemy;
 class Bullet;
@@ -19,6 +21,8 @@ public:
 
   void cleanup(std::vector<std::unique_ptr<Bullet>> &bullets,
                std::vector<std::unique_ptr<Enemy>> &enemies, Room &room);
+
+  void checkCollisions(const sf::Time &dt, Player &player, Room &room);
 };
 
 #endif // PHYSICS_MANAGER_HPP

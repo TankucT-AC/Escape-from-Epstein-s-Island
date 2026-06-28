@@ -44,7 +44,7 @@ void Engine::render() {
   EngineRender.clear();
 
   EngineRender.drawRoom(*room);
-  EngineRender.drawEntity(player);
+  EngineRender.drawPlayer(player);
   EngineRender.drawEnemies(enemies);
   EngineRender.drawBullets(bullets);
 

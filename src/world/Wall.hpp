@@ -6,12 +6,10 @@
 
 #include "src/game/Entity.hpp"
 
-class Wall : public Entity {
+class Wall : public Entity, public IDrawAble {
 public:
   Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos);
 
-  virtual void move(const sf::Time &dt,
-                    const sf::Vector2<float> &offset) override {};
   virtual void update(const UpdateContext &ctx) override {};
   virtual void draw(sf::RenderWindow &window) override;
 };

@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-class Entity;
+class Player;
 class Bullet;
 class Enemy;
 class Room;
@@ -25,7 +25,7 @@ public:
   void clear();
 
   void drawRoom(Room &room);
-  void drawEntity(Entity &entity);
+  void drawPlayer(Player &player);
   void drawBullets(std::vector<std::unique_ptr<Bullet>> &bullets);
   void drawEnemies(std::vector<std::unique_ptr<Enemy>> &enemies);
 

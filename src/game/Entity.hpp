@@ -23,16 +23,26 @@ public:
   virtual float getDamage() = 0;
 };
 
+class IMoveAble {
+public:
+  virtual void move(const sf::Time &dt, const sf::Vector2<float> &offset) = 0;
+  virtual float getSpeed() = 0;
+  virtual sf::Vector2<float> getVelocity() = 0;
+};
+
+class IDrawAble {
+public:
+  virtual void draw(sf::RenderWindow &window) = 0;
+};
+
 // Абстракный класс для сущностей
 class Entity {
 protected:
   sf::Sprite sprite;
-  float speed;
 
 public:
-  Entity(const sf::Texture &InitTexture, float InitSpeed,
-         sf::Vector2<float> InitPos)
-      : sprite(InitTexture), speed(InitSpeed) {
+  Entity(const sf::Texture &InitTexture, sf::Vector2<float> InitPos)
+      : sprite(InitTexture) {
     sprite.setPosition(InitPos);
 
     sf::Rect<float> bounds = sprite.getLocalBounds();
@@ -40,9 +50,7 @@ public:
   }
   virtual ~Entity() = default;
 
-  virtual void move(const sf::Time &dt, const sf::Vector2<float> &offset) = 0;
   virtual void update(const UpdateContext &ctx) = 0;
-  virtual void draw(sf::RenderWindow &window) = 0;
 
   virtual sf::Vector2<float> getPosition() const {
     return sprite.getPosition();

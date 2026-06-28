@@ -7,8 +7,8 @@
 
 Enemy::Enemy(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
              float InitSpeed, float InitShootDelay, float InitHealth)
-    : Entity(InitTexture, InitSpeed, InitPos), shootTime(0.f),
-      shootDelay(InitShootDelay), health(InitHealth), dead(false) {
+    : Entity(InitTexture, InitPos), shootTime(0.f), shootDelay(InitShootDelay),
+      health(InitHealth), dead(false), speed(InitSpeed), velocity({0.f, 0.f}) {
   sf::Rect<float> bounds = sprite.getLocalBounds();
   sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }

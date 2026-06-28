@@ -8,12 +8,17 @@
 #include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
 
-class Bullet : public Entity, public IDamageDealer {
+class Bullet : public Entity,
+               public IDamageDealer,
+               public IDrawAble,
+               public IMoveAble {
 private:
   float damage;
   float lifetime;
   sf::Vector2<float> direction;
   bool dead;
+  float speed;
+  sf::Vector2<float> velocity;
 
 public:
   Bullet(const sf::Texture &InitTexture, const sf::Vector2<float> &InitStartPos,
@@ -32,6 +37,8 @@ public:
   bool isBulletAlive() const;
   virtual float getDamage() override;
 
+  virtual float getSpeed() override { return speed; }
+  virtual sf::Vector2<float> getVelocity() override { return velocity; }
   void setBulletAlive(bool isAlive) { dead = !isAlive; };
 };
 

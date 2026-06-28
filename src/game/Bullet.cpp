@@ -10,8 +10,9 @@ Bullet::Bullet(const sf::Texture &InitTexture,
                const sf::Vector2<float> &InitStartPos,
                const sf::Vector2<float> &InitDirection, float InitDegree,
                float InitSpeed, float InitLifetime, float InitDamage)
-    : Entity(InitTexture, InitSpeed, InitStartPos), direction(InitDirection),
-      lifetime(InitLifetime), damage(InitDamage), dead(false) {
+    : Entity(InitTexture, InitStartPos), direction(InitDirection),
+      lifetime(InitLifetime), damage(InitDamage), dead(false), speed(InitSpeed),
+      velocity({0.f, 0.f}) {
   sf::Rect<float> b = sprite.getLocalBounds();
   sprite.setOrigin(b.width / 2.f, b.height / 2.f);
   sprite.setScale(0.5f, 0.5f);

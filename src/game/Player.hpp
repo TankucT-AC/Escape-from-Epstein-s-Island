@@ -15,11 +15,15 @@
 // Forward-ссылка на PlayerInputState
 struct PlayerInputState;
 
-class Player : public Entity, public IDamageAble {
+class Player : public Entity,
+               public IDamageAble,
+               public IDrawAble,
+               public IMoveAble {
 private:
   float ShootTime;
   float ShootDelay;
   sf::Vector2<float> velocity;
+  float speed;
 
 public:
   Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
@@ -43,8 +47,8 @@ public:
   virtual void takeDamage(float amount) override {}
   virtual float getHealth() override { return 0.f; }
 
-  virtual float getSpeed() const { return speed; }
-  virtual sf::Vector2<float> getVelocity() const { return velocity; }
+  virtual float getSpeed() override { return speed; }
+  virtual sf::Vector2<float> getVelocity() override { return velocity; }
 };
 
 #endif

@@ -11,8 +11,8 @@
 
 Player::Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
                float InitSpeed, float InitShootDelay)
-    : Entity(InitTexture, InitSpeed, InitPos), ShootTime(0.f),
-      ShootDelay(InitShootDelay), velocity{0.f, 0.f} {}
+    : Entity(InitTexture, InitPos), ShootTime(0.f), ShootDelay(InitShootDelay),
+      velocity{0.f, 0.f}, speed(InitSpeed) {}
 
 void Player::move(const sf::Time &dt, const sf::Vector2<float> &offset) {
   sprite.move(dt.asSeconds() * offset);

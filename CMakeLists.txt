@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(2DGame)
 
@@ -93,7 +93,8 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-add_custom_command(TARGET game_core POST_BUILD
+# copy assets in bin
+add_custom_command(TARGET PRIVATE game_core POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
     "$<TARGET_FILE_DIR:game_core>/assets"

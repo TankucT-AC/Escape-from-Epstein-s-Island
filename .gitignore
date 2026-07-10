@@ -1,7 +1,7 @@
 # файлы кэша и сборки
 .cache
 build
-.aider*
 out
-.clang*
+.vscode
+.clangd
 compile_commands.json

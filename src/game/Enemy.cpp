@@ -17,7 +17,7 @@ void Enemy::move(const sf::Time &dt, const sf::Vector2<float> &offset) {
   sprite.move(dt.asSeconds() * offset);
 }
 
-void Enemy::draw(sf::RenderWindow &window) {
+void Enemy::draw(sf::RenderWindow &window) const {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
@@ -31,9 +31,8 @@ void Enemy::draw(sf::RenderWindow &window) {
 #endif
 }
 
-void Enemy::update(const sf::Time &dt, const sf::Vector2<float> &playerPos,
-                   sf::RenderWindow &window) {
-  sf::Vector2<float> offset = playerPos - this->getPosition();
+void Enemy::update(const sf::Time &dt) {
+  sf::Vector2<float> offset = targetPosition - this->getPosition();
   float len = std::sqrt(offset.x * offset.x + offset.y * offset.y);
   if (len > 0)
     offset /= len;
@@ -55,4 +54,9 @@ bool Enemy::isBulletCollision(const Bullet &bullet) {
   sf::Rect<float> enemyHitbox = sprite.getGlobalBounds();
 
   return enemyHitbox.intersects(bulletHitbox);
+}
+
+float Enemy::getLayerY() const {
+  sf::Rect<float> hitbox = this->getHitbox();
+  return hitbox.top + (hitbox.height / 2.f);
 }

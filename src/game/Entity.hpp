@@ -4,7 +4,6 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
-#include "src/core/UpdateContext.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -27,12 +26,14 @@ class IMoveAble {
 public:
   virtual void move(const sf::Time &dt, const sf::Vector2<float> &offset) = 0;
   virtual float getSpeed() = 0;
-  virtual sf::Vector2<float> getVelocity() = 0;
+  virtual sf::Vector2<float> getVelocity() const = 0;
 };
 
 class IDrawAble {
 public:
-  virtual void draw(sf::RenderWindow &window) = 0;
+  virtual ~IDrawAble() = default;
+  virtual void draw(sf::RenderWindow &window) const = 0;
+  virtual float getLayerY() const = 0;
 };
 
 // Абстракный класс для сущностей
@@ -50,7 +51,7 @@ public:
   }
   virtual ~Entity() = default;
 
-  virtual void update(const UpdateContext &ctx) = 0;
+  virtual void update(const sf::Time &dt) = 0;
 
   virtual sf::Vector2<float> getPosition() const {
     return sprite.getPosition();

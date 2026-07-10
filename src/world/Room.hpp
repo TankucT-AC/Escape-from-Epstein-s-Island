@@ -4,6 +4,7 @@
 #ifndef ROOM_HPP
 #define ROOM_HPP
 
+#include "src/core/RenderManager.hpp"
 #include "src/core/ResourceManager.hpp"
 #include "src/world/Wall.hpp"
 #include <memory>
@@ -19,8 +20,6 @@ public:
   Room(const std::vector<std::vector<int>> &InitBlueprint,
        sf::Vector2<float> InitPos, ResourceManager &rm);
 
-  void draw(sf::RenderWindow &window);
-
   template <typename Object> bool checkCollision(const Object &object) const {
     auto objectHitbox = object.getHitbox();
     for (const auto &wall : walls) {
@@ -32,6 +31,7 @@ public:
     return false;
   }
 
+  void submitRender(RenderManager &RenderManager);
   sf::Vector2<float> getPosition() const {
     return walls.front()->getPosition();
   }

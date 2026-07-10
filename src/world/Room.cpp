@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "Room.hpp"
+#include "src/core/RenderManager.hpp"
 #include "src/core/config.hpp"
 
 Room::Room(const std::vector<std::vector<int>> &InitBlueprint,
@@ -18,8 +19,8 @@ Room::Room(const std::vector<std::vector<int>> &InitBlueprint,
   }
 }
 
-void Room::draw(sf::RenderWindow &window) {
+void Room::submitRender(RenderManager &RenderManager) {
   for (const auto &wall : walls) {
-    wall->draw(window);
+    RenderManager.submit(*wall);
   }
 }

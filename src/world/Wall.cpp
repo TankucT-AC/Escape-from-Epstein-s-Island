@@ -10,7 +10,7 @@ Wall::Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos)
   sprite.setScale({scale, scale});
 }
 
-void Wall::draw(sf::RenderWindow &window) {
+void Wall::draw(sf::RenderWindow &window) const {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
@@ -22,4 +22,9 @@ void Wall::draw(sf::RenderWindow &window) {
   debugRect.setOutlineThickness(1.f);
   window.draw(debugRect);
 #endif
+}
+
+float Wall::getLayerY() const {
+  sf::Rect<float> hitbox = this->getHitbox();
+  return hitbox.top;
 }

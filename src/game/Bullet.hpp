@@ -5,7 +5,6 @@
 #define BULLET_HPP
 
 #include "Entity.hpp"
-#include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
 
 class Bullet : public Entity,
@@ -27,18 +26,19 @@ public:
          float InitLifetime = config::BULLET_DEFAULT_LIFETIME,
          float InitDamage = config::BULLET_DEFAULT_DAMAGE);
 
-  virtual void update(const UpdateContext &ctx) override;
-  virtual void draw(sf::RenderWindow &window) override;
+  virtual void update(const sf::Time &dt) override;
+  virtual void draw(sf::RenderWindow &window) const override;
   virtual void move(const sf::Time &dt,
                     const sf::Vector2<float> &offset) override;
   virtual sf::Rect<float> getHitbox() const override;
+  virtual float getLayerY() const override;
 
   int getLifetime() const;
   bool isBulletAlive() const;
   virtual float getDamage() override;
 
   virtual float getSpeed() override { return speed; }
-  virtual sf::Vector2<float> getVelocity() override { return velocity; }
+  virtual sf::Vector2<float> getVelocity() const override { return velocity; }
   void setBulletAlive(bool isAlive) { dead = !isAlive; };
 };
 

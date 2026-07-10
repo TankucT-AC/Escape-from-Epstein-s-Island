@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "src/core/Engine.hpp"
-#include "UpdateContext.hpp"
 #include "config.hpp"
 #include "src/core/InputManager.hpp"
 #include "src/game/Bullet.hpp"
-#include <cmath>
 #include <memory>
 
 Engine::Engine()
@@ -43,24 +41,34 @@ void Engine::render() {
   EngineRender.setCamera(EngineCamera);
   EngineRender.clear();
 
-  EngineRender.drawRoom(*room);
-  EngineRender.drawPlayer(player);
-  EngineRender.drawEnemies(enemies);
-  EngineRender.drawBullets(bullets);
+  room->submitRender(EngineRender);
+  EngineRender.submit(player);
+  for (const auto &enemy : enemies) {
+    EngineRender.submit(*enemy);
+  }
+  for (const auto &bullet : bullets) {
+    EngineRender.submit(*bullet);
+  }
 
+  EngineRender.draw();
   EngineRender.display();
 }
 
 void Engine::update(const sf::Time &dt) {
   EngineInput.pollEvents(*EngineWindow, EngineEvent, EngineCamera);
 
-  player.update(UpdateContext(dt, *EngineWindow, *room));
+  sf::Vector2<int> mousePos = sf::Mouse::getPosition(*EngineWindow);
+  sf::Vector2<float> worldMousePos = EngineWindow->mapPixelToCoords(mousePos);
+  player.setMousePos(worldMousePos);
+  player.update(dt);
   player.moveShootTime(dt);
+
   for (const auto &bullet : bullets) {
-    bullet->update(UpdateContext(dt, *EngineWindow, *room));
+    bullet->update(dt);
   }
   for (const auto &enemy : enemies) {
-    enemy->update(dt, player.getPosition(), *EngineWindow);
+    enemy->setTargetPosition(player.getPosition());
+    enemy->update(dt);
   }
 
   EnginePhysics.handleCollisions(bullets, enemies, *room);

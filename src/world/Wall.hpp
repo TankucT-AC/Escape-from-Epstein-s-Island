@@ -10,8 +10,9 @@ class Wall : public Entity, public IDrawAble {
 public:
   Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos);
 
-  virtual void update(const UpdateContext &ctx) override {};
-  virtual void draw(sf::RenderWindow &window) override;
+  virtual void update(const sf::Time &dt) override {};
+  virtual void draw(sf::RenderWindow &window) const override;
+  virtual float getLayerY() const override;
 };
 
 #endif // WALL_HPP

@@ -4,7 +4,7 @@
 #include "Player.hpp"
 #include "src/core/InputManager.hpp"
 #include "src/core/ResourceManager.hpp"
-#include "src/core/UpdateContext.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
@@ -18,7 +18,7 @@ void Player::move(const sf::Time &dt, const sf::Vector2<float> &offset) {
   sprite.move(dt.asSeconds() * offset);
 }
 
-void Player::draw(sf::RenderWindow &window) {
+void Player::draw(sf::RenderWindow &window) const {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
@@ -32,7 +32,11 @@ void Player::draw(sf::RenderWindow &window) {
 #endif
 }
 
-void Player::update(const UpdateContext &ctx) {
+void Player::setMousePos(const sf::Vector2<float> &worldMousePos) {
+  mousePos = worldMousePos;
+}
+
+void Player::update(const sf::Time &dt) {
   // перемещение игрока в пространстве
   auto offset = sf::Vector2<float>(0.f, 0.f);
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -52,11 +56,8 @@ void Player::update(const UpdateContext &ctx) {
   velocity = offset * speed;
 
   // вращение игрока в зависимости от позиции мышки
-  sf::Vector2<int> mousePos = sf::Mouse::getPosition(ctx.window);
-  sf::Vector2<float> worldMousePos = ctx.window.mapPixelToCoords(mousePos);
-  auto playerPos = sprite.getPosition();
-
-  sf::Vector2<float> direction = worldMousePos - playerPos;
+  sf::Vector2<float> playerPos = sprite.getPosition();
+  sf::Vector2<float> direction = mousePos - playerPos;
 
   auto radians = static_cast<float>(std::atan2(direction.y, direction.x));
 
@@ -73,12 +74,16 @@ sf::Rect<float> Player::getHitbox() const {
 
   float hb_width = 24.f;
   float hb_height = 16.f;
-
   float offsetY = 20.f;
 
   return sf::Rect<float>(pos.x - hb_width / 2.f,
                          pos.y - hb_height / 2.f + offsetY, hb_width,
                          hb_height);
+}
+
+float Player::getLayerY() const {
+  sf::Rect<float> hitbox = this->getHitbox();
+  return hitbox.top + (hitbox.height / 2.f);
 }
 
 void Player::cooldown() { ShootTime = ShootDelay; }

@@ -18,7 +18,6 @@ add_library(game_core STATIC
 target_sources(game_core PRIVATE
     src/core/Engine.hpp
     src/core/Engine.cpp
-    src/core/UpdateContext.hpp
     src/core/ResourceManager.hpp
     src/core/InputManager.hpp
     src/core/InputManager.cpp
@@ -94,7 +93,7 @@ if(BUILD_TESTS)
 endif()
 
 # copy assets in bin
-add_custom_command(TARGET PRIVATE game_core POST_BUILD
+add_custom_command(TARGET game_core POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
     "$<TARGET_FILE_DIR:game_core>/assets"

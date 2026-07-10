@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "Bullet.hpp"
-#include "src/core/UpdateContext.hpp"
 #include <SFML/System/Time.hpp>
-#include <cmath>
 
 Bullet::Bullet(const sf::Texture &InitTexture,
                const sf::Vector2<float> &InitStartPos,
@@ -19,18 +17,18 @@ Bullet::Bullet(const sf::Texture &InitTexture,
   sprite.setRotation(InitDegree);
 }
 
-void Bullet::update(const UpdateContext &ctx) {
-  auto offset = direction * speed;
-  this->move(ctx.dt, offset);
+void Bullet::update(const sf::Time &dt) {
+  sf::Vector2<float> offset = direction * speed;
+  this->move(dt, offset);
 
-  lifetime -= ctx.dt.asSeconds();
+  lifetime -= dt.asSeconds();
   if (lifetime <= 0) {
     dead = true;
     lifetime = 0;
   }
 }
 
-void Bullet::draw(sf::RenderWindow &window) {
+void Bullet::draw(sf::RenderWindow &window) const {
   window.draw(sprite);
 
 #if DEBUG_DRAW_COLLISIONS
@@ -59,4 +57,9 @@ sf::Rect<float> Bullet::getHitbox() const {
 
   return sf::Rect<float>(pos.x - hb_width / 2.f, pos.y - hb_height / 2.f,
                          hb_width, hb_height);
+}
+
+float Bullet::getLayerY() const {
+  sf::Rect<float> hitbox = this->getHitbox();
+  return hitbox.top + (hitbox.height / 2.f);
 }

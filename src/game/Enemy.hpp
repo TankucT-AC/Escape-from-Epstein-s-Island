@@ -20,6 +20,7 @@ private:
   bool dead;
   float speed;
   sf::Vector2<float> velocity;
+  sf::Vector2<float> targetPosition;
 
 public:
   Enemy(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
@@ -29,19 +30,20 @@ public:
 
   virtual void move(const sf::Time &dt,
                     const sf::Vector2<float> &offset) override;
-  virtual void update(const UpdateContext &ctx) override {};
-  virtual void draw(sf::RenderWindow &window) override;
-
-  virtual void update(const sf::Time &dt, const sf::Vector2<float> &playerPos,
-                      sf::RenderWindow &window);
+  virtual void update(const sf::Time &dt) override;
+  virtual void draw(sf::RenderWindow &window) const override;
   virtual void takeDamage(float amount) override;
-
   virtual float getHealth() override { return health; }
+  virtual float getLayerY() const override;
+
   bool isEnemyAlive() const { return !dead; }
   bool isBulletCollision(const Bullet &bullet);
+  void setTargetPosition(const sf::Vector2<float> &targetPos) {
+    targetPosition = targetPos;
+  };
 
   virtual float getSpeed() override { return speed; }
-  virtual sf::Vector2<float> getVelocity() override { return velocity; }
+  virtual sf::Vector2<float> getVelocity() const override { return velocity; }
 };
 
 #endif

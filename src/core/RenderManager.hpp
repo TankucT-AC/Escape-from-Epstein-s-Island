@@ -6,29 +6,24 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
-#include <memory>
+#include <functional>
 #include <vector>
 
-class Player;
-class Bullet;
-class Enemy;
-class Room;
+class IDrawAble;
 
 class RenderManager {
 private:
   sf::RenderWindow &renderWindow;
+  std::vector<std::reference_wrapper<IDrawAble>> renderQueue;
 
 public:
   explicit RenderManager(sf::RenderWindow &initWindow);
   ~RenderManager() = default;
+
   void setCamera(const sf::View &camera);
   void clear();
-
-  void drawRoom(Room &room);
-  void drawPlayer(Player &player);
-  void drawBullets(std::vector<std::unique_ptr<Bullet>> &bullets);
-  void drawEnemies(std::vector<std::unique_ptr<Enemy>> &enemies);
-
+  void submit(std::reference_wrapper<IDrawAble> object);
+  void draw();
   void display();
 };
 

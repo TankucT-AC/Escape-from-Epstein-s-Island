@@ -6,7 +6,6 @@
 
 #include "Bullet.hpp"
 #include "src/core/ResourceManager.hpp"
-#include "src/core/UpdateContext.hpp"
 #include "src/core/config.hpp"
 #include "src/game/Entity.hpp"
 #include <memory>
@@ -24,6 +23,7 @@ private:
   float ShootDelay;
   sf::Vector2<float> velocity;
   float speed;
+  sf::Vector2<float> mousePos;
 
 public:
   Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
@@ -32,14 +32,15 @@ public:
 
   virtual void move(const sf::Time &dt,
                     const sf::Vector2<float> &offset) override;
-  virtual void update(const UpdateContext &ctx) override;
-  virtual void draw(sf::RenderWindow &window) override;
+  virtual void update(const sf::Time &dt) override;
+  virtual void draw(sf::RenderWindow &window) const override;
   virtual sf::Rect<float> getHitbox() const override;
+  virtual float getLayerY() const override;
 
   virtual void moveShootTime(const sf::Time &dt);
   virtual bool isShootTime() const;
   virtual void cooldown();
-
+  virtual void setMousePos(const sf::Vector2<float> &worldMousePos);
   void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
   void handlePlayer(const PlayerInputState &input, ResourceManager &rm,
                     std::vector<std::unique_ptr<Bullet>> &bullets);
@@ -48,7 +49,7 @@ public:
   virtual float getHealth() override { return 0.f; }
 
   virtual float getSpeed() override { return speed; }
-  virtual sf::Vector2<float> getVelocity() override { return velocity; }
+  virtual sf::Vector2<float> getVelocity() const override { return velocity; }
 };
 
 #endif

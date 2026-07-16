@@ -5,7 +5,7 @@
       "name": "gcc-debug",
       "displayName": "GCC Debug",
       "binaryDir": "${sourceDir}/out/gcc-debug",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_C_COMPILER": "gcc",
@@ -16,7 +16,7 @@
       "name": "clang-release",
       "displayName": "Clang Release",
       "binaryDir": "${sourceDir}/out/clang-release",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_C_COMPILER": "clang",

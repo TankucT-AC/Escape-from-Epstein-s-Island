@@ -53,13 +53,15 @@ target_sources(game_core PRIVATE
 
 # World
 target_sources(game_core PRIVATE
-    src/world/BSPTree.hpp
-    src/world/BSPTree.cpp
     src/world/DungeonGenerator.hpp
+    src/world/DungeonGenerator.cpp
+    src/world/Prefabs.hpp
     src/world/Room.hpp
     src/world/Room.cpp
     src/world/Wall.hpp
     src/world/Wall.cpp
+    src/world/Floor.hpp
+    src/world/Floor.cpp
 )
 
 # third-party

@@ -4,8 +4,9 @@
 #include "Wall.hpp"
 #include "src/core/config.hpp"
 
-Wall::Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos)
-    : Entity(InitTexture, InitPos) {
+Wall::Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
+           bool isSortable)
+    : Entity(InitTexture, InitPos), m_isSortable(isSortable) {
   float scale = config::TILE_SIZE / sprite.getLocalBounds().width;
   sprite.setScale({scale, scale});
 }
@@ -25,6 +26,8 @@ void Wall::draw(sf::RenderWindow &window) const {
 }
 
 float Wall::getLayerY() const {
+  if (!m_isSortable)
+    return -1000.f;
   sf::Rect<float> hitbox = this->getHitbox();
-  return hitbox.top;
+  return hitbox.top + (hitbox.height / 2.f);
 }

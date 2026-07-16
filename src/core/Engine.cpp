@@ -5,6 +5,8 @@
 #include "config.hpp"
 #include "src/core/InputManager.hpp"
 #include "src/game/Bullet.hpp"
+#include "src/world/DungeonGenerator.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <memory>
 
 Engine::Engine()
@@ -13,8 +15,9 @@ Engine::Engine()
       EngineVideoMode(config::GAMEBOARD_WIDTH, config::GAMEBOARD_HEIGHT),
       EngineWindow(std::make_unique<sf::RenderWindow>(EngineVideoMode,
                                                       config::GAMEBOARD_NAME)),
-      EngineRender(*EngineWindow) {
-  DungeonData dungeon = dungeonGenerator.generateDungeon(60, 60, 4, 15, 7);
+      EngineRender(*EngineWindow),
+      dungeonGenerator(DungeonGenerator::defaultConfig()) {
+  DungeonData dungeon = dungeonGenerator.generate();
 
   room = std::make_unique<Room>(dungeon.grid, sf::Vector2<float>(0.f, 0.f),
                                 resourceManager);

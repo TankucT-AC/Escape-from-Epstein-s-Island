@@ -4,6 +4,8 @@
 #include "Room.hpp"
 #include "src/core/RenderManager.hpp"
 #include "src/core/config.hpp"
+#include <SFML/System/Vector2.hpp>
+#include <memory>
 
 Room::Room(const std::vector<std::vector<int>> &InitBlueprint,
            sf::Vector2<float> InitPos, ResourceManager &rm) {
@@ -12,8 +14,16 @@ Room::Room(const std::vector<std::vector<int>> &InitBlueprint,
       if (InitBlueprint[y][x] == static_cast<int>(RoomElements::WALL)) {
         sf::Vector2<float> wall_pos = {InitPos.x + (x * config::TILE_SIZE),
                                        InitPos.y + (y * config::TILE_SIZE)};
+        bool isSortable =
+            ((y < 0 && InitBlueprint[y - 1][x] ==
+                           static_cast<int>(RoomElements::FLOOR)));
         walls.push_back(std::make_unique<Wall>(
-            rm.getTexture(config::DEFAULT_WALL_TEXTURE), wall_pos));
+            rm.getTexture(config::DEFAULT_WALL_TEXTURE), wall_pos, isSortable));
+      } else if (InitBlueprint[y][x] == static_cast<int>(RoomElements::FLOOR)) {
+        sf::Vector2<float> floor_pos = {InitPos.x + (x * config::TILE_SIZE),
+                                        InitPos.y + (y * config::TILE_SIZE)};
+        floors.push_back(std::make_unique<Floor>(
+            rm.getTexture(config::DESERT_FLOOR_TEXTURE), floor_pos));
       }
     }
   }
@@ -22,5 +32,9 @@ Room::Room(const std::vector<std::vector<int>> &InitBlueprint,
 void Room::submitRender(RenderManager &RenderManager) {
   for (const auto &wall : walls) {
     RenderManager.submit(*wall);
+  }
+
+  for (const auto &floor : floors) {
+    RenderManager.submit(*floor);
   }
 }

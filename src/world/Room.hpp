@@ -6,14 +6,16 @@
 
 #include "src/core/RenderManager.hpp"
 #include "src/core/ResourceManager.hpp"
+#include "src/world/Floor.hpp"
 #include "src/world/Wall.hpp"
 #include <memory>
 
-enum class RoomElements { FLOOR, WALL, TEMP_FLAG };
+enum class RoomElements { FLOOR, WALL, TEMP_FLAG, EMPTY };
 
 class Room {
 private:
   std::vector<std::unique_ptr<Wall>> walls;
+  std::vector<std::unique_ptr<Floor>> floors;
   sf::Vector2<float> position;
 
 public:

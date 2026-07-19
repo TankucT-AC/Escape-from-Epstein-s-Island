@@ -12,7 +12,7 @@
 #include "src/game/Enemy.hpp"
 #include "src/game/Player.hpp"
 #include "src/world/DungeonGenerator.hpp"
-#include "src/world/Room.hpp"
+#include "src/world/LevelManager.hpp"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -41,7 +41,7 @@ private:
   std::vector<std::unique_ptr<Bullet>> bullets;
 
   DungeonGenerator dungeonGenerator;
-  std::unique_ptr<Room> room;
+  LevelManager levelManager;
 
 public:
   Engine();

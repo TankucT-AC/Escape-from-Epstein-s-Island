@@ -35,7 +35,7 @@ static const std::string ENEMY_TEXTURE = TEXTURE_PATH + "enemy.png";
 static const std::string DEFAULT_WALL_TEXTURE =
     TEXTURE_PATH + "default_wall.png";
 static const std::string DESERT_FLOOR_TEXTURE =
-    TEXTURE_PATH + "desert_floor.png";
+    TEXTURE_PATH + "default_floor.png";
 /*
     ХАРАКТЕРИСТИКИ ДЛЯ КЛАССОВ
 */

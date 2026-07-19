@@ -9,7 +9,7 @@
 #include <vector>
 
 class Player;
-class Room;
+class LevelManager;
 class Enemy;
 class Bullet;
 
@@ -17,12 +17,14 @@ class PhysicsManager {
 public:
   void handleCollisions(std::vector<std::unique_ptr<Bullet>> &bullets,
                         std::vector<std::unique_ptr<Enemy>> &enemies,
-                        Room &room);
+                        LevelManager &levelManager);
 
   void cleanup(std::vector<std::unique_ptr<Bullet>> &bullets,
-               std::vector<std::unique_ptr<Enemy>> &enemies, Room &room);
+               std::vector<std::unique_ptr<Enemy>> &enemies,
+               LevelManager &levelManager);
 
-  void checkCollisions(const sf::Time &dt, Player &player, Room &room);
+  void checkCollisions(const sf::Time &dt, Player &player,
+                       LevelManager &levelManager);
 };
 
 #endif // PHYSICS_MANAGER_HPP

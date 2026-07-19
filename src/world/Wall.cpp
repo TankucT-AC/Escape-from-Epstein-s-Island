@@ -26,8 +26,9 @@ void Wall::draw(sf::RenderWindow &window) const {
 }
 
 float Wall::getLayerY() const {
-  if (!m_isSortable)
-    return -1000.f;
-  sf::Rect<float> hitbox = this->getHitbox();
-  return hitbox.top + (hitbox.height / 2.f);
+  // if (!m_isSortable)
+  //   return -1000.f;
+  // sf::Rect<float> hitbox = this->getHitbox();
+  // return hitbox.top + (hitbox.height / 2.f);
+  return -1000.f;
 }

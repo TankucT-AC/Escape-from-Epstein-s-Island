@@ -7,6 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 
 enum class Tile : char {
@@ -35,18 +36,39 @@ struct Cell {
 
 struct DungeonConfig {
   int gridWidth = 5;
-  int gridHeight = 5;
-  int walkSteps = 0;
-  int corridorLength = 0;
+  int gridHeight = 4;
+  int walkSteps = 6;
+  int corridorLength = 6;
   int corridorWidth = 3;
   int prefabSize = 13;
   unsigned int seed = 0;
 };
 
+// Данные для размещения одной комнаты
+struct RoomPlacement {
+  uint8_t prefabIndex = 0;
+  int tileX = 0;
+  int tileY = 0;
+  bool connectUp = false;
+  bool connectDown = false;
+  bool connectLeft = false;
+  bool connectRight = false;
+};
+
+// Данные для размещения одного коридора
+struct CorridorPlacement {
+  bool isHorizontal = true;
+  int tileX = 0;
+  int tileY = 0;
+  int width = 0;  // полная ширина в тайлах (включая стенки)
+  int height = 0; // полная высота в тайлах (включая стенки)
+};
+
 struct DungeonData {
-  std::vector<std::vector<int>> grid;
+  std::vector<RoomPlacement> rooms;
+  std::vector<CorridorPlacement> corridors;
   sf::Vector2<float> playerSpawnPoint;
-  int roomCount = 0;
+  int corridorWidth = 3;
 };
 
 class DungeonGenerator {
@@ -62,12 +84,13 @@ public:
 private:
   DungeonConfig m_config;
   std::vector<Cell> m_cells;
+  std::vector<std::pair<int, int>> m_walkPath;
   std::vector<std::string> m_prefabs;
 
   void initPrefabs();
   void randomWalk();
   void resolveConnections();
-  void assembleGrid(DungeonData &data);
+  void assembleData(DungeonData &data);
   int cellIndex(int x, int y) const;
 };
 

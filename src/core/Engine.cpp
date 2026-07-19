@@ -7,7 +7,10 @@
 #include "src/game/Bullet.hpp"
 #include "src/world/DungeonGenerator.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <functional>
+#include <iostream>
 #include <memory>
+#include <optional>
 
 Engine::Engine()
     : player(resourceManager.getTexture(config::PLAYER_TEXTURE),
@@ -19,8 +22,7 @@ Engine::Engine()
       dungeonGenerator(DungeonGenerator::defaultConfig()) {
   DungeonData dungeon = dungeonGenerator.generate();
 
-  room = std::make_unique<Room>(dungeon.grid, sf::Vector2<float>(0.f, 0.f),
-                                resourceManager);
+  levelManager.buildFromData(dungeon, resourceManager);
 
   player.setPosition(dungeon.playerSpawnPoint);
 
@@ -44,7 +46,7 @@ void Engine::render() {
   EngineRender.setCamera(EngineCamera);
   EngineRender.clear();
 
-  room->submitRender(EngineRender);
+  levelManager.submitRender(EngineRender);
   EngineRender.submit(player);
   for (const auto &enemy : enemies) {
     EngineRender.submit(*enemy);
@@ -74,13 +76,20 @@ void Engine::update(const sf::Time &dt) {
     enemy->update(dt);
   }
 
-  EnginePhysics.handleCollisions(bullets, enemies, *room);
-  EnginePhysics.cleanup(bullets, enemies, *room);
-  EnginePhysics.checkCollisions(dt, player, *room);
+  EnginePhysics.handleCollisions(bullets, enemies, levelManager);
+  EnginePhysics.cleanup(bullets, enemies, levelManager);
+  EnginePhysics.checkCollisions(dt, player, levelManager);
 
   PlayerInputState state =
       EngineInput.getPlayerInput(*EngineWindow, player, resourceManager);
   player.handlePlayer(state, resourceManager, bullets);
 
+  std::optional<std::reference_wrapper<Room>> roomWrapper =
+      levelManager.findRoomAt(player.getCenter());
+  if (roomWrapper.has_value()) {
+    std::cout << &(roomWrapper.value().get()) << '\n';
+  } else {
+    std::cout << "this is corridore!\n";
+  }
   EngineCamera.setCenter(player.getPosition());
 }

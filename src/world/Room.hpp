@@ -8,6 +8,8 @@
 #include "src/core/ResourceManager.hpp"
 #include "src/world/Floor.hpp"
 #include "src/world/Wall.hpp"
+#include <SFML/System/Vector2.hpp>
+#include <cstdint>
 #include <memory>
 
 enum class RoomElements { FLOOR, WALL, TEMP_FLAG, EMPTY };
@@ -19,8 +21,12 @@ private:
   sf::Vector2<float> position;
 
 public:
+  // TODO: удалить старый конструктор
   Room(const std::vector<std::vector<int>> &InitBlueprint,
        sf::Vector2<float> InitPos, ResourceManager &rm);
+
+  Room(uint8_t prefabIndex, sf::Vector2<int> tilePos, bool cUp, bool cDown,
+       bool cLeft, bool cRight, int doorHalfW, ResourceManager &rm);
 
   template <typename Object> bool checkCollision(const Object &object) const {
     auto objectHitbox = object.getHitbox();
@@ -29,7 +35,6 @@ public:
       if (wallHitbox.intersects(objectHitbox))
         return true;
     }
-
     return false;
   }
 
@@ -37,6 +42,8 @@ public:
   sf::Vector2<float> getPosition() const {
     return walls.front()->getPosition();
   }
+
+  bool isObjectInRoom(sf::Vector2<float> position);
 };
 
 #endif // ROOM_HPP

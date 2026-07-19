@@ -8,6 +8,7 @@
 #include "src/core/ResourceManager.hpp"
 #include "src/core/config.hpp"
 #include "src/game/Entity.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <vector>
 
@@ -50,6 +51,11 @@ public:
 
   virtual float getSpeed() override { return speed; }
   virtual sf::Vector2<float> getVelocity() const override { return velocity; }
+  sf::Vector2<float> getCenter() const {
+    sf::Rect<float> playerHitbox = getHitbox();
+    return {playerHitbox.left + playerHitbox.width / 2.f,
+            playerHitbox.top + playerHitbox.height / 2.f};
+  }
 };
 
 #endif

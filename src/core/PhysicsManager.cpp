@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "PhysicsManager.hpp"
+#include "LevelManager.hpp"
 #include "src/game/Bullet.hpp"
 #include "src/game/Enemy.hpp"
 #include "src/game/Player.hpp"
-#include "src/world/LevelManager.hpp"
 
 void PhysicsManager::handleCollisions(
     std::vector<std::unique_ptr<Bullet>> &bullets,

@@ -13,7 +13,7 @@ Bullet::Bullet(const sf::Texture &InitTexture,
       velocity({0.f, 0.f}) {
   sf::Rect<float> b = sprite.getLocalBounds();
   sprite.setOrigin(b.width / 2.f, b.height / 2.f);
-  sprite.setScale(0.5f, 0.5f);
+  sprite.setScale(2.f, 2.f);
   sprite.setRotation(InitDegree);
 }
 

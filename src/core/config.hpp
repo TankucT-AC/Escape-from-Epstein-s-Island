@@ -36,6 +36,14 @@ static const std::string DEFAULT_WALL_TEXTURE =
     TEXTURE_PATH + "default_wall.png";
 static const std::string DESERT_FLOOR_TEXTURE =
     TEXTURE_PATH + "default_floor.png";
+static const std::string DEFAUTL_CHEST_CLOSED_TEXTURE =
+    TEXTURE_PATH + "default_chest_closed.png";
+static const std::string DEFAUTL_CHEST_OPEN_TEXTURE =
+    TEXTURE_PATH + "default_chest_open.png";
+static const std::string DEFAULT_GATE_CLOSED =
+    TEXTURE_PATH + "default_gate_closed.jpg";
+static const std::string DEFAUTL_GATE_OPEN =
+    TEXTURE_PATH + "default_gate_open.jpg";
 /*
     ХАРАКТЕРИСТИКИ ДЛЯ КЛАССОВ
 */

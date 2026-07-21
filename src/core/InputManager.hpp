@@ -14,6 +14,7 @@
 
 struct PlayerInputState {
   bool wantToShoot = false;
+  bool wantToInteract = false;
   sf::Vector2<float> mousePos;
 };
 

@@ -6,44 +6,110 @@
 
 #include "src/core/RenderManager.hpp"
 #include "src/core/ResourceManager.hpp"
+#include "src/game/Player.hpp"
+#include "src/world/Chest.hpp"
 #include "src/world/Floor.hpp"
+#include "src/world/Gate.hpp"
 #include "src/world/Wall.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <cstdint>
+#include <functional>
 #include <memory>
+#include <optional>
 
 enum class RoomElements { FLOOR, WALL, TEMP_FLAG, EMPTY };
 
+enum class RoomType { Spawn, Chest, Combat };
+
+enum class CombatState { Inactive, Active, Cleared };
+
+struct GateSlot {
+  sf::Vector2<float> worldPos;
+  bool isHorizontal;
+  int doorWidth;
+};
+
 class Room {
 private:
-  std::vector<std::unique_ptr<Wall>> walls;
-  std::vector<std::unique_ptr<Floor>> floors;
-  sf::Vector2<float> position;
+  std::vector<std::unique_ptr<Wall>> m_walls;
+  std::vector<std::unique_ptr<Floor>> m_floors;
+  std::vector<std::unique_ptr<Gate>> m_gates;
+  std::unique_ptr<Chest> m_chest;
+
+  // Для сундука — опционально, только если есть место под него
+  sf::Vector2<float> m_chestPos;
+  bool m_hasChestSlot = false;
+
+  sf::Vector2<int> m_tilePos;
+  RoomType m_roomType;
+  CombatState m_combatState;
+  std::vector<sf::Vector2<float>> m_spawnPoints;
+
+  void buildFromPrefab(uint8_t prefabIndex, bool cUp, bool cDown, bool cLeft,
+                       bool cRight, int doorHalfW, ResourceManager &rm);
 
 public:
-  // TODO: удалить старый конструктор
+  // Старый конструктор (обратная совместимость)
   Room(const std::vector<std::vector<int>> &InitBlueprint,
        sf::Vector2<float> InitPos, ResourceManager &rm);
 
+  // Основной конструктор
   Room(uint8_t prefabIndex, sf::Vector2<int> tilePos, bool cUp, bool cDown,
        bool cLeft, bool cRight, int doorHalfW, ResourceManager &rm);
 
+  // Коллизия со стенами и закрытыми воротами
   template <typename Object> bool checkCollision(const Object &object) const {
-    auto objectHitbox = object.getHitbox();
-    for (const auto &wall : walls) {
-      auto wallHitbox = wall->getHitbox();
-      if (wallHitbox.intersects(objectHitbox))
+    auto hb = object.getHitbox();
+    for (const auto &w : m_walls)
+      if (w->getHitbox().intersects(hb))
         return true;
-    }
+    for (const auto &g : m_gates)
+      if (!g->isOpen() && g->getHitbox().intersects(hb))
+        return true;
     return false;
   }
 
-  void submitRender(RenderManager &RenderManager);
-  sf::Vector2<float> getPosition() const {
-    return walls.front()->getPosition();
+  bool doesPlayerOverlapGates(const Player &player) const {
+    sf::Rect<float> phb = player.getHitbox();
+    for (const auto &g : m_gates)
+      if (g->getHitbox().intersects(phb))
+        return true;
+    return false;
   }
 
+  void closeAllGates() {
+    for (auto &g : m_gates)
+      g->setClosed();
+  }
+  void openAllGates() {
+    for (auto &g : m_gates)
+      g->setOpen();
+  }
+
+  void spawnChest(ResourceManager &rm);
+
+  void submitRender(RenderManager &RenderManager);
+
   bool isObjectInRoom(sf::Vector2<float> position);
+
+  RoomType getRoomType() const { return m_roomType; }
+  CombatState getCombatState() const { return m_combatState; }
+  void setCombatState(CombatState s) { m_combatState = s; }
+  const std::vector<sf::Vector2<float>> &getSpawnPoints() const {
+    return m_spawnPoints;
+  }
+  bool hasChestSlot() const { return m_hasChestSlot; }
+  sf::Vector2<float> getChestPos() const { return m_chestPos; }
+  std::optional<std::reference_wrapper<Chest>> getChest() {
+    if (m_chest.get() == nullptr)
+      return std::nullopt;
+    return *m_chest;
+  }
+  sf::Vector2<float> getPosition() const {
+    return m_walls.front()->getPosition();
+  }
+
+  static RoomType typeFromPrefab(uint8_t prefabIndex);
 };
 
 #endif // ROOM_HPP

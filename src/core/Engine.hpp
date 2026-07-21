@@ -5,6 +5,7 @@
 #define ENGINE_HPP
 
 #include "InputManager.hpp"
+#include "LevelManager.hpp"
 #include "PhysicsManager.hpp"
 #include "RenderManager.hpp"
 #include "ResourceManager.hpp"
@@ -12,7 +13,6 @@
 #include "src/game/Enemy.hpp"
 #include "src/game/Player.hpp"
 #include "src/world/DungeonGenerator.hpp"
-#include "src/world/LevelManager.hpp"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -22,7 +22,9 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 class Engine {
@@ -43,13 +45,20 @@ private:
   DungeonGenerator dungeonGenerator;
   LevelManager levelManager;
 
+  std::optional<std::reference_wrapper<Room>> m_activeCombatRoom;
+  int m_combatWave = 0;
+
+  std::optional<std::reference_wrapper<Room>> m_previousRoom;
+
+  void activateCombatRoom(Room &room);
+  void spawnCombatWave(Room &room);
+  void clearCombatRoom(Room &room);
+
 public:
   Engine();
 
   void run();
-
   void render();
-
   void update(const sf::Time &dt);
 };
 

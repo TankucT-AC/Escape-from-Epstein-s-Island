@@ -5,7 +5,6 @@
 #include "src/core/ResourceManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include <cmath>
 
 void InputManager::pollEvents(sf::RenderWindow &window, sf::Event &event,
                               sf::View &camera) {
@@ -26,10 +25,14 @@ PlayerInputState InputManager::getPlayerInput(sf::RenderWindow &window,
                                               Player &player,
                                               ResourceManager &rm) {
   PlayerInputState state;
-  if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+  sf::Vector2<int> pixelPos = sf::Mouse::getPosition(window);
+  state.mousePos = window.mapPixelToCoords(pixelPos);
+
+  if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     state.wantToShoot = true;
-    state.mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-  }
+
+  if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    state.wantToInteract = true;
 
   return state;
 }

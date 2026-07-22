@@ -4,6 +4,7 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
+#include "CombatManager.hpp"
 #include "InputManager.hpp"
 #include "LevelManager.hpp"
 #include "PhysicsManager.hpp"
@@ -12,15 +13,12 @@
 #include "src/game/Bullet.hpp"
 #include "src/game/Enemy.hpp"
 #include "src/game/Player.hpp"
+#include "src/game/Weapon.hpp"
+#include "src/game/WeaponPickup.hpp"
 #include "src/world/DungeonGenerator.hpp"
-#include <SFML/Audio.hpp>
+#include "src/world/Portal.hpp"
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <functional>
 #include <memory>
@@ -44,19 +42,28 @@ private:
 
   DungeonGenerator dungeonGenerator;
   LevelManager levelManager;
-
-  std::optional<std::reference_wrapper<Room>> m_activeCombatRoom;
-  int m_combatWave = 0;
+  CombatManager combatManager;
 
   std::optional<std::reference_wrapper<Room>> m_previousRoom;
+  std::optional<std::reference_wrapper<Room>> m_portalRoom;
 
-  void activateCombatRoom(Room &room);
-  void spawnCombatWave(Room &room);
-  void clearCombatRoom(Room &room);
+  int m_round = 1;
+  static const int MAX_ROUNDS = 3;
+  std::unique_ptr<Portal> m_portal;
+
+  std::vector<std::unique_ptr<WeaponPickup>> m_weaponPickups;
+
+  void generateRound();
+  void tryActivateCombat(Room &room);
+  void tryCompleteCombatWave();
+  void spawnPortalInRoom(Room &room);
+  std::unique_ptr<WeaponPickup> swapWeapon(WeaponPickup &pickup);
+  void tryOpenChest(sf::Vector2<float> worldPos);
+  void tryAdvanceRound(sf::Vector2<float> worldPos);
+  void goToPurgatory();
 
 public:
   Engine();
-
   void run();
   void render();
   void update(const sf::Time &dt);

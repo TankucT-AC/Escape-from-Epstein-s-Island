@@ -6,6 +6,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <cstdint>
+#include <random>
 #include <string>
 #include <utility>
 #include <vector>
@@ -76,6 +77,7 @@ public:
   explicit DungeonGenerator(const DungeonConfig &config);
 
   DungeonData generate();
+  void reseed() { m_config.seed = std::random_device{}(); }
 
   const std::vector<Cell> &getCells() const { return m_cells; }
 
@@ -88,7 +90,7 @@ private:
   std::vector<std::string> m_prefabs;
 
   void initPrefabs();
-  void randomWalk();
+  void randomWalk(unsigned int seed);
   void resolveConnections();
   void assembleData(DungeonData &data);
   int cellIndex(int x, int y) const;

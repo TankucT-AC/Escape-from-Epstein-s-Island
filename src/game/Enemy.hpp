@@ -4,29 +4,35 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
-#include "Bullet.hpp"
+#include "AnimatedSprite.hpp"
 #include "Entity.hpp"
 #include "src/core/config.hpp"
 #include <SFML/System/Vector2.hpp>
+
+class Bullet;
 
 class Enemy : public Entity,
               public IDamageAble,
               public IDrawAble,
               public IMoveAble {
 private:
-  float shootTime;
-  float shootDelay;
   float health;
   bool dead;
   float speed;
   sf::Vector2<float> velocity;
   sf::Vector2<float> targetPosition;
+  AnimatedSprite m_animator;
 
 public:
   Enemy(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
         float InitSpeed = config::ENEMY_DEFAULT_SPEED,
-        float InitShootDelay = config::PLAYER_DEFAULT_SHOOT_DELAY,
         float InitHealth = config::ENEMY_DEFAULT_HEALTH);
+
+  void initAnimation(int frameW, int frameH, int frameCount, float frameTime, int idleRow = 0, int runRow = 0) {
+    m_animator.init(frameW, frameH, frameCount, frameTime, idleRow, runRow);
+    sprite.setTextureRect({0, idleRow * frameH, frameW, frameH});
+    sprite.setOrigin(frameW / 2.f, frameH / 2.f);
+  }
 
   virtual void move(const sf::Time &dt,
                     const sf::Vector2<float> &offset) override;
@@ -40,7 +46,7 @@ public:
   bool isBulletCollision(const Bullet &bullet);
   void setTargetPosition(const sf::Vector2<float> &targetPos) {
     targetPosition = targetPos;
-  };
+  }
 
   virtual float getSpeed() override { return speed; }
   virtual sf::Vector2<float> getVelocity() const override { return velocity; }

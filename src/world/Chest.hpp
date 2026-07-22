@@ -16,6 +16,7 @@ private:
   State m_state;
   sf::Texture m_closedTex;
   sf::Texture m_openTex;
+  int m_weaponDrop = 0; // 0 = ничего, 1-3 = индекс оружия
 
 public:
   Chest(const sf::Texture &closedTex, const sf::Texture &openTex,
@@ -23,6 +24,8 @@ public:
 
   void open();
   bool isOpen() const { return m_state == State::Open; }
+  int getWeaponDrop() const { return m_weaponDrop; }
+  void setWeaponDrop(int idx) { m_weaponDrop = idx; }
 
   virtual void update(const sf::Time &dt) override {}
   virtual void draw(sf::RenderWindow &window) const override;

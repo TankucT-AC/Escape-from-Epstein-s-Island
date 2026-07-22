@@ -5,6 +5,7 @@
 #include "Prefabs.hpp"
 #include "src/core/config.hpp"
 #include <algorithm>
+#include <numeric>
 #include <random>
 
 namespace {
@@ -44,22 +45,29 @@ void DungeonGenerator::initPrefabs() {
 }
 
 DungeonData DungeonGenerator::generate() {
-  m_cells.clear();
-  m_cells.resize(m_config.gridWidth * m_config.gridHeight);
-  for (int y = 0; y < m_config.gridHeight; ++y)
-    for (int x = 0; x < m_config.gridWidth; ++x) {
-      Cell &c = m_cells[cellIndex(x, y)];
-      c.x = x;
-      c.y = y;
-      c.active = false;
-      c.connectUp = false;
-      c.connectDown = false;
-      c.connectLeft = false;
-      c.connectRight = false;
-    }
+  // Минимум 5 комнат: Spawn + Portal + 3 боевые (гарантия >=3 Combat)
+  static constexpr size_t MIN_ROOMS = 5;
+  unsigned int attemptSeed = m_config.seed;
 
-  m_walkPath.clear();
-  randomWalk();
+  do {
+    m_cells.clear();
+    m_cells.resize(m_config.gridWidth * m_config.gridHeight);
+    for (int y = 0; y < m_config.gridHeight; ++y)
+      for (int x = 0; x < m_config.gridWidth; ++x) {
+        Cell &c = m_cells[cellIndex(x, y)];
+        c.x = x;
+        c.y = y;
+        c.active = false;
+        c.connectUp = false;
+        c.connectDown = false;
+        c.connectLeft = false;
+        c.connectRight = false;
+      }
+
+    m_walkPath.clear();
+    randomWalk(attemptSeed++);
+  } while (m_walkPath.size() < MIN_ROOMS);
+
   resolveConnections();
 
   DungeonData data;
@@ -74,13 +82,16 @@ int DungeonGenerator::cellIndex(int x, int y) const {
 // ──────────────────────────────────────────────────────────────────
 //  randomWalk() — «Пьяная походка» по макро-сетке
 // ──────────────────────────────────────────────────────────────────
-void DungeonGenerator::randomWalk() {
-  std::mt19937 rng(m_config.seed);
+void DungeonGenerator::randomWalk(unsigned int seed) {
+  std::mt19937 rng(seed);
   std::uniform_int_distribution<int> xDist(0, m_config.gridWidth - 1);
   std::uniform_int_distribution<int> yDist(0, m_config.gridHeight - 1);
-  std::uniform_int_distribution<int> dirDist(0, 3);
-  std::uniform_int_distribution<uint8_t> prefabDist(
-      2, static_cast<uint8_t>(Prefabs::ALL.size() - 1));
+
+  // Только префабы со спавнерами врагов ('x'): COMBAT и ARENA
+  static const std::vector<uint8_t> COMBAT_PREFABS = {Prefabs::IDX_COMBAT,
+                                                      Prefabs::IDX_ARENA};
+  std::uniform_int_distribution<size_t> combatDist(0,
+                                                   COMBAT_PREFABS.size() - 1);
 
   const int dx[4] = {0, 0, -1, 1};
   const int dy[4] = {-1, 1, 0, 0};
@@ -88,35 +99,61 @@ void DungeonGenerator::randomWalk() {
   int cx = xDist(rng);
   int cy = yDist(rng);
   m_cells[cellIndex(cx, cy)].active = true;
-  m_cells[cellIndex(cx, cy)].prefabIndex = 1;
   m_walkPath.push_back({cx, cy});
 
   for (int step = 1; step < m_config.walkSteps; ++step) {
     int dirs[4] = {0, 1, 2, 3};
     std::shuffle(std::begin(dirs), std::end(dirs), rng);
-
     bool moved = false;
     for (int d : dirs) {
       int nx = cx + dx[d];
       int ny = cy + dy[d];
-
       if (nx < 0 || nx >= m_config.gridWidth || ny < 0 ||
           ny >= m_config.gridHeight)
         continue;
       if (m_cells[cellIndex(nx, ny)].active)
         continue;
-
       cx = nx;
       cy = ny;
       m_cells[cellIndex(cx, cy)].active = true;
-      m_cells[cellIndex(cx, cy)].prefabIndex = prefabDist(rng);
       m_walkPath.push_back({cx, cy});
       moved = true;
       break;
     }
-
     if (!moved)
       break;
+  }
+
+  size_t total = m_walkPath.size();
+  if (total == 0)
+    return;
+
+  auto [sx, sy] = m_walkPath.front();
+  m_cells[cellIndex(sx, sy)].prefabIndex = Prefabs::IDX_SPAWN;
+
+  if (total >= 2) {
+    auto [lx, ly] = m_walkPath.back();
+    m_cells[cellIndex(lx, ly)].prefabIndex = Prefabs::IDX_PORTAL_ROOM;
+  }
+
+  size_t middleCount = (total >= 2) ? total - 2 : 0;
+  if (middleCount == 0)
+    return;
+
+  std::vector<size_t> middleIndices(middleCount);
+  std::iota(middleIndices.begin(), middleIndices.end(), 1);
+  std::shuffle(middleIndices.begin(), middleIndices.end(), rng);
+
+  // Максимум 1 сокровищница — только если остаётся >=3 боевых
+  size_t midIdx = 0;
+  if (middleCount >= 4) {
+    auto [tx, ty] = m_walkPath[middleIndices[midIdx++]];
+    m_cells[cellIndex(tx, ty)].prefabIndex = Prefabs::IDX_TREASURE;
+  }
+
+  for (; midIdx < middleIndices.size(); ++midIdx) {
+    auto [rx, ry] = m_walkPath[middleIndices[midIdx]];
+    m_cells[cellIndex(rx, ry)].prefabIndex = COMBAT_PREFABS[combatDist(rng)];
   }
 }
 
@@ -185,7 +222,7 @@ void DungeonGenerator::assembleData(DungeonData &data) {
       data.rooms.push_back(rp);
 
       // Поиск спавна игрока в префабе
-      if (!playerSpawnFound && rp.prefabIndex == 1) {
+      if (!playerSpawnFound && rp.prefabIndex == Prefabs::IDX_SPAWN) {
         const std::string &prefab =
             m_prefabs[rp.prefabIndex % m_prefabs.size()];
         for (int py = 0; py < roomSz && !playerSpawnFound; ++py)

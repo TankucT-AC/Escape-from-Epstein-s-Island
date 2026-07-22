@@ -13,7 +13,7 @@ Bullet::Bullet(const sf::Texture &InitTexture,
       velocity({0.f, 0.f}) {
   sf::Rect<float> b = sprite.getLocalBounds();
   sprite.setOrigin(b.width / 2.f, b.height / 2.f);
-  sprite.setScale(2.f, 2.f);
+  sprite.setScale(config::BULLET_SCALE, config::BULLET_SCALE);
   sprite.setRotation(InitDegree);
 }
 
@@ -37,7 +37,7 @@ void Bullet::draw(sf::RenderWindow &window) const {
   debugRect.setPosition(hb.left, hb.top);
   debugRect.setFillColor(sf::Color::Transparent);
   debugRect.setOutlineColor(sf::Color::Red);
-  debugRect.setOutlineThickness(1.f);
+  debugRect.setOutlineThickness(config::DEBUG_OUTLINE_THICKNESS);
   window.draw(debugRect);
 #endif
 }
@@ -51,12 +51,9 @@ float Bullet::getDamage() { return damage; }
 bool Bullet::isBulletAlive() const { return !dead; }
 sf::Rect<float> Bullet::getHitbox() const {
   sf::Vector2f pos = sprite.getPosition();
-
-  float hb_width = 12.f;
-  float hb_height = 4.f;
-
-  return sf::Rect<float>(pos.x - hb_width / 2.f, pos.y - hb_height / 2.f,
-                         hb_width, hb_height);
+  return sf::Rect<float>(pos.x - config::BULLET_HITBOX_W / 2.f,
+                         pos.y - config::BULLET_HITBOX_H / 2.f,
+                         config::BULLET_HITBOX_W, config::BULLET_HITBOX_H);
 }
 
 float Bullet::getLayerY() const {

@@ -126,7 +126,11 @@ void Room::buildFromPrefab(uint8_t prefabIndex, bool cUp, bool cDown,
   }
 
   // Сундук: ищем пустой пол в центре
-  if (m_roomType == RoomType::Combat || m_roomType == RoomType::Chest) {
+  bool needsSlot = (m_roomType == RoomType::Combat ||
+                     m_roomType == RoomType::Treasure ||
+                     m_roomType == RoomType::Spawn ||
+                     m_roomType == RoomType::Portal);
+  if (needsSlot) {
     if (isFloor[DOOR_IDX][DOOR_IDX]) {
       m_chestPos = tileToWorld(m_tilePos.x + DOOR_IDX, m_tilePos.y + DOOR_IDX);
       m_hasChestSlot = true;
@@ -195,7 +199,7 @@ void Room::buildFromPrefab(uint8_t prefabIndex, bool cUp, bool cDown,
   }
 
   // Сундук для Chest-комнат создаём сразу
-  if (m_roomType == RoomType::Chest && m_hasChestSlot)
+  if (m_roomType == RoomType::Treasure && m_hasChestSlot)
     spawnChest(rm);
 }
 
@@ -243,9 +247,11 @@ bool Room::isObjectInRoom(sf::Vector2<float> position) {
 }
 
 RoomType Room::typeFromPrefab(uint8_t prefabIndex) {
-  if (prefabIndex == 1)
+  if (prefabIndex == Prefabs::IDX_SPAWN)
     return RoomType::Spawn;
-  if (prefabIndex == 2 || prefabIndex == 6)
+  if (prefabIndex == Prefabs::IDX_COMBAT || prefabIndex == Prefabs::IDX_ARENA)
     return RoomType::Combat;
-  return RoomType::Chest;
+  if (prefabIndex == Prefabs::IDX_TREASURE)
+    return RoomType::Treasure;
+  return RoomType::Portal;
 }

@@ -31,8 +31,10 @@ PlayerInputState InputManager::getPlayerInput(sf::RenderWindow &window,
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     state.wantToShoot = true;
 
-  if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+  bool rightPressed = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+  if (rightPressed && !m_prevRightButton)
     state.wantToInteract = true;
+  m_prevRightButton = rightPressed;
 
   return state;
 }

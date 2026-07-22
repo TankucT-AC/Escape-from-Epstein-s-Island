@@ -4,11 +4,11 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 
 class IDamageAble {
@@ -36,7 +36,6 @@ public:
   virtual float getLayerY() const = 0;
 };
 
-// Абстракный класс для сущностей
 class Entity {
 protected:
   sf::Sprite sprite;
@@ -45,8 +44,7 @@ public:
   Entity(const sf::Texture &InitTexture, sf::Vector2<float> InitPos)
       : sprite(InitTexture) {
     sprite.setPosition(InitPos);
-
-    sf::Rect<float> bounds = sprite.getLocalBounds();
+    sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
   }
   virtual ~Entity() = default;
@@ -55,13 +53,14 @@ public:
 
   virtual sf::Vector2<float> getPosition() const {
     return sprite.getPosition();
-  };
-  virtual sf::Rect<float> getHitbox() const {
-    return sprite.getGlobalBounds();
-  };
+  }
+  virtual sf::FloatRect getHitbox() const { return sprite.getGlobalBounds(); }
   virtual void setPosition(const sf::Vector2<float> &newPos) {
     sprite.setPosition(newPos);
-  };
+  }
+
+  sf::Sprite &getSprite() { return sprite; }
+  const sf::Sprite &getSprite() const { return sprite; }
 };
 
 #endif // ENTITY_HPP

@@ -19,7 +19,9 @@
 
 enum class RoomElements { FLOOR, WALL, TEMP_FLAG, EMPTY };
 
-enum class RoomType { Spawn, Chest, Combat };
+// Только три типа: Spawn, Combat, Treasure.
+// Treasure = единственная комната с гарантированным сундуком (префаб TREASURE).
+enum class RoomType { Spawn, Combat, Treasure, Portal };
 
 enum class CombatState { Inactive, Active, Cleared };
 
@@ -36,7 +38,6 @@ private:
   std::vector<std::unique_ptr<Gate>> m_gates;
   std::unique_ptr<Chest> m_chest;
 
-  // Для сундука — опционально, только если есть место под него
   sf::Vector2<float> m_chestPos;
   bool m_hasChestSlot = false;
 
@@ -49,15 +50,12 @@ private:
                        bool cRight, int doorHalfW, ResourceManager &rm);
 
 public:
-  // Старый конструктор (обратная совместимость)
   Room(const std::vector<std::vector<int>> &InitBlueprint,
        sf::Vector2<float> InitPos, ResourceManager &rm);
 
-  // Основной конструктор
   Room(uint8_t prefabIndex, sf::Vector2<int> tilePos, bool cUp, bool cDown,
        bool cLeft, bool cRight, int doorHalfW, ResourceManager &rm);
 
-  // Коллизия со стенами и закрытыми воротами
   template <typename Object> bool checkCollision(const Object &object) const {
     auto hb = object.getHitbox();
     for (const auto &w : m_walls)
@@ -70,7 +68,7 @@ public:
   }
 
   bool doesPlayerOverlapGates(const Player &player) const {
-    sf::Rect<float> phb = player.getHitbox();
+    auto phb = player.getHitbox();
     for (const auto &g : m_gates)
       if (g->getHitbox().intersects(phb))
         return true;
@@ -101,7 +99,7 @@ public:
   bool hasChestSlot() const { return m_hasChestSlot; }
   sf::Vector2<float> getChestPos() const { return m_chestPos; }
   std::optional<std::reference_wrapper<Chest>> getChest() {
-    if (m_chest.get() == nullptr)
+    if (!m_chest)
       return std::nullopt;
     return *m_chest;
   }
@@ -109,6 +107,8 @@ public:
     return m_walls.front()->getPosition();
   }
 
+  // Только TREASURE (3) даёт тип Treasure.
+  // SPAWN (1) → Spawn, COMBAT (2) и ARENA (6) → Combat, остальное → Combat.
   static RoomType typeFromPrefab(uint8_t prefabIndex);
 };
 

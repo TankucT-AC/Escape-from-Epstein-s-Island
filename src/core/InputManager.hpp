@@ -19,6 +19,9 @@ struct PlayerInputState {
 };
 
 class InputManager {
+private:
+  bool m_prevRightButton = false;
+
 public:
   void pollEvents(sf::RenderWindow &window, sf::Event &event, sf::View &camera);
   PlayerInputState getPlayerInput(sf::RenderWindow &window, Player &player,

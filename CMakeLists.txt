@@ -18,6 +18,8 @@ add_library(game_core STATIC
 target_sources(game_core PRIVATE
     src/core/Engine.hpp
     src/core/Engine.cpp
+    src/core/CombatManager.hpp
+    src/core/CombatManager.cpp
     src/core/ResourceManager.hpp
     src/core/InputManager.hpp
     src/core/InputManager.cpp
@@ -25,10 +27,13 @@ target_sources(game_core PRIVATE
     src/core/RenderManager.cpp
     src/core/PhysicsManager.hpp
     src/core/PhysicsManager.cpp
+    src/core/LevelManager.hpp
+    src/core/LevelManager.cpp
 )
 
 # Game
 target_sources(game_core PRIVATE
+    src/game/AnimatedSprite.hpp
     src/game/Bullet.hpp
     src/game/Bullet.cpp
     src/game/Enemy.hpp
@@ -36,6 +41,8 @@ target_sources(game_core PRIVATE
     src/game/Entity.hpp
     src/game/Player.hpp
     src/game/Player.cpp
+    src/game/Weapon.hpp
+    src/game/WeaponPickup.hpp
 )
 
 # Network
@@ -53,14 +60,18 @@ target_sources(game_core PRIVATE
 
 # World
 target_sources(game_core PRIVATE
+    src/world/Chest.hpp
+    src/world/Chest.cpp
     src/world/Corridor.hpp
     src/world/Corridor.cpp
     src/world/DungeonGenerator.hpp
     src/world/DungeonGenerator.cpp
     src/world/Floor.hpp
     src/world/Floor.cpp
-    src/world/LevelManager.hpp
-    src/world/LevelManager.cpp
+    src/world/Gate.hpp
+    src/world/Gate.cpp
+    src/world/Portal.hpp
+    src/world/Portal.cpp
     src/world/Prefabs.hpp
     src/world/Room.hpp
     src/world/Room.cpp

@@ -5,6 +5,7 @@
 #include "src/core/ResourceManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 void InputManager::pollEvents(sf::RenderWindow &window, sf::Event &event,
                               sf::View &camera) {
@@ -35,6 +36,13 @@ PlayerInputState InputManager::getPlayerInput(sf::RenderWindow &window,
   if (rightPressed && !m_prevRightButton)
     state.wantToInteract = true;
   m_prevRightButton = rightPressed;
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+    state.weaponSlot = 0;
+  else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+    state.weaponSlot = 1;
+  else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+    state.weaponSlot = 2;
 
   return state;
 }

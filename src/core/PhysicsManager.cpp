@@ -38,8 +38,8 @@ void PhysicsManager::cleanup(std::vector<std::unique_ptr<Bullet>> &bullets,
       enemies.end());
 }
 
-void PhysicsManager::checkCollisions(const sf::Time &dt, Player &player,
-                                     LevelManager &levelManager) {
+void PhysicsManager::handleCollisions(const sf::Time &dt, Player &player,
+                                      LevelManager &levelManager) {
   sf::Vector2<float> oldPos = player.getPosition();
 
   player.move(dt, sf::Vector2<float>{player.getVelocity().x, 0.f});
@@ -50,5 +50,16 @@ void PhysicsManager::checkCollisions(const sf::Time &dt, Player &player,
   player.move(dt, sf::Vector2<float>{0.f, player.getVelocity().y});
   if (levelManager.checkCollision(player)) {
     player.setPosition(sf::Vector2<float>{player.getPosition().x, oldPos.y});
+  }
+}
+
+void PhysicsManager::moveEnemies(const sf::Time &dt,
+                                 std::vector<std::unique_ptr<Enemy>> &enemies,
+                                 LevelManager &levelManager) {
+  for (auto &enemy : enemies) {
+    sf::Vector2<float> oldPos = enemy->getPosition();
+    enemy->move(dt, enemy->getVelocity());
+    if (levelManager.checkCollision(*enemy))
+      enemy->setPosition(oldPos);
   }
 }

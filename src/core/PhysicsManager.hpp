@@ -23,8 +23,18 @@ public:
                std::vector<std::unique_ptr<Enemy>> &enemies,
                LevelManager &levelManager);
 
-  void checkCollisions(const sf::Time &dt, Player &player,
-                       LevelManager &levelManager);
+  void handleCollisions(const sf::Time &dt, Player &player,
+                        LevelManager &levelManager);
+
+  /**
+   * @brief Двигает всех врагов и разрешает коллизии со стенами.
+   * @param dt Дельта времени.
+   * @param enemies Вектор врагов (изменяются позиции).
+   * @param levelManager Менеджер уровня для проверки коллизий.
+   */
+  static void moveEnemies(const sf::Time &dt,
+                          std::vector<std::unique_ptr<Enemy>> &enemies,
+                          LevelManager &levelManager);
 };
 
 #endif // PHYSICS_MANAGER_HPP

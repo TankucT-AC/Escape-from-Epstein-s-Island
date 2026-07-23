@@ -8,6 +8,12 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+/**
+ * @brief Игровой сундук.
+ *
+ * Имеет два состояния: закрыт (Closed) и открыт (Open).
+ * При открытии указывает индекс выпавшего оружия через setWeaponDrop().
+ */
 class Chest : public Entity, public IDrawAble {
 public:
   enum class State { Closed, Open };

@@ -15,6 +15,7 @@
 struct PlayerInputState {
   bool wantToShoot = false;
   bool wantToInteract = false;
+  int weaponSlot = -1; // -1 = бездействие, 0/1/2 = Num1/Num2/Num3
   sf::Vector2<float> mousePos;
 };
 

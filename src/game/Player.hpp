@@ -11,7 +11,9 @@
 #include "src/core/config.hpp"
 #include "src/game/Entity.hpp"
 #include <SFML/System/Vector2.hpp>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 struct PlayerInputState;
@@ -57,6 +59,7 @@ public:
   void cooldown();
   void setMousePos(const sf::Vector2<float> &worldMousePos);
   void setPosition(sf::Vector2<float> offset) { sprite.setPosition(offset); }
+  void syncWeaponTransform();
   void handlePlayer(const PlayerInputState &input, ResourceManager &rm,
                     std::vector<std::unique_ptr<Bullet>> &bullets);
 
@@ -75,7 +78,7 @@ public:
   int activeWeaponIndex() const { return m_activeWeapon; }
   size_t getWeaponCount() const { return m_weapons.size(); }
   std::unique_ptr<Weapon> removeWeapon(int slot);
-  const Weapon *getActiveWeapon() const;
+  const std::optional<std::reference_wrapper<Weapon>> getActiveWeapon() const;
 };
 
 #endif

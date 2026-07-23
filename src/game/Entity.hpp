@@ -11,6 +11,9 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 
+/**
+ * @brief Интерфейс сущности, способной получать урон.
+ */
 class IDamageAble {
 public:
   virtual void takeDamage(float amount) = 0;
@@ -22,6 +25,9 @@ public:
   virtual float getDamage() = 0;
 };
 
+/**
+ * @brief Интерфейс движущейся сущности.
+ */
 class IMoveAble {
 public:
   virtual void move(const sf::Time &dt, const sf::Vector2<float> &offset) = 0;
@@ -29,6 +35,12 @@ public:
   virtual sf::Vector2<float> getVelocity() const = 0;
 };
 
+/**
+ * @brief Интерфейс рисуемой сущности.
+ *
+ * Используется RenderManager для отложенной отрисовки с сортировкой
+ * по слою (getLayerY).
+ */
 class IDrawAble {
 public:
   virtual ~IDrawAble() = default;

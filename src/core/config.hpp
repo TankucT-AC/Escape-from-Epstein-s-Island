@@ -4,7 +4,7 @@
 #ifndef CONFIG_PROJECT_HPP
 #define CONFIG_PROJECT_HPP
 
-#define DEBUG_DRAW_COLLISIONS 1
+#define DEBUG_DRAW_COLLISIONS 0
 #define DEBUG_NOT_AUTH 1
 
 #include <string>
@@ -35,7 +35,8 @@ static const int PLAYER_FRAME_COUNT = 4;
 static const float PLAYER_FRAME_TIME = 0.08f;
 static const int PLAYER_IDLE_ROW = 0;
 static const int PLAYER_RUN_ROW = 1;
-static const float PLAYER_WEAPON_Y_OFFSET = 20.f;
+static const float PLAYER_WEAPON_Y_OFFSET = 26.f;
+static const float PLAYER_HITBOX_Y_OFFSET = 20.f;
 static const float PLAYER_HITBOX_HALF_W = 12.f;
 static const float PLAYER_HITBOX_HALF_H = 8.f;
 static const float PLAYER_HITBOX_W = 24.f;
@@ -61,7 +62,7 @@ static const float ENEMY_DEFAULT_HEALTH = 5.f;
 static const std::string PORTAL_SPRITESHEET =
     TEXTURE_PATH + "world/portal_states.png";
 static const int PORTAL_FRAME_W = 212;
-static const int PORTAL_FRAME_H = 312;
+static const int PORTAL_FRAME_H = 208;
 static const int PORTAL_FRAME_COUNT = 8;
 static const float PORTAL_FRAME_TIME = 0.15f;
 static const float PORTAL_SCALE = 1.5f;
@@ -76,13 +77,12 @@ static const float BULLET_DEFAULT_SPEED = 200.f;
 static const float BULLET_DEFAULT_DAMAGE = 0.5f;
 
 // ─── Оружие ───
-// Масштаб = прямой zoom-фактор текстуры (подобран под размер пресета)
 static const std::string WEAPON_01_TEX =
     TEXTURE_PATH + "weapon/weapon_01/weapon_01.png";
 static const std::string WEAPON_01_BULLET =
     TEXTURE_PATH + "weapon/weapon_01/weapon_bullet_01.png";
 static const float WEAPON_01_FIRE_RATE = 0.4f;
-static const float WEAPON_01_DAMAGE = 0.5f;
+static const float WEAPON_01_DAMAGE = 10.f;
 static const float WEAPON_01_BULLET_SPEED = 300.f;
 static const float WEAPON_01_SCALE = 2.2f; // пистолет 26x8 -> 57x18 px
 

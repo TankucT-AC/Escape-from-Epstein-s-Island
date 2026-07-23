@@ -50,3 +50,11 @@ LevelManager::findChestAt(sf::Vector2<float> worldPos) {
   }
   return std::nullopt;
 }
+
+bool LevelManager::allCombatRoomsCleared() const {
+  for (const auto &room : m_rooms)
+    if (room->getRoomType() == RoomType::Combat &&
+        room->getCombatState() != CombatState::Cleared)
+      return false;
+  return true;
+}

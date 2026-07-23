@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "CombatManager.hpp"
+#include "LevelManager.hpp"
 #include "src/core/config.hpp"
 
 void CombatManager::activate(Room &room) {
@@ -32,8 +33,8 @@ bool CombatManager::tryCloseGates(Room &room, const Player &player) {
 }
 
 void CombatManager::spawnWave(Room &room,
-                               std::vector<std::unique_ptr<Enemy>> &enemies,
-                               ResourceManager &rm) {
+                              std::vector<std::unique_ptr<Enemy>> &enemies,
+                              ResourceManager &rm) {
   const std::vector<sf::Vector2<float>> &pts = room.getSpawnPoints();
   if (pts.empty())
     return;
@@ -66,4 +67,37 @@ bool CombatManager::checkWaveComplete(
       return false;
   enemies.clear();
   return true;
+}
+
+void CombatManager::updatePlayerRoom(LevelManager &levelManager,
+                                     const Player &player) {
+  auto current = levelManager.findRoomAt(player.getCenter());
+  if (current.has_value()) {
+    Room &room = current.value().get();
+    bool isNew =
+        !m_previousRoom.has_value() || &m_previousRoom.value().get() != &room;
+    if (isNew && room.getRoomType() == RoomType::Combat &&
+        room.getCombatState() == CombatState::Inactive)
+      activate(room);
+    m_previousRoom = std::ref(room);
+  } else {
+    m_previousRoom.reset();
+  }
+}
+
+void CombatManager::tryCompleteWave(
+    std::vector<std::unique_ptr<Enemy>> &enemies, ResourceManager &rm) {
+  if (!hasActiveRoom())
+    return;
+  Room &room = activeRoom();
+  if (room.getCombatState() != CombatState::Active)
+    return;
+  if (!checkWaveComplete(enemies))
+    return;
+  if (currentWave() < maxWaves())
+    spawnWave(room, enemies, rm);
+  else {
+    clearRoom(room);
+    room.spawnChest(rm);
+  }
 }

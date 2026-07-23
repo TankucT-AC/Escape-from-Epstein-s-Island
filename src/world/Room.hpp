@@ -18,11 +18,7 @@
 #include <optional>
 
 enum class RoomElements { FLOOR, WALL, TEMP_FLAG, EMPTY };
-
-// Только три типа: Spawn, Combat, Treasure.
-// Treasure = единственная комната с гарантированным сундуком (префаб TREASURE).
 enum class RoomType { Spawn, Combat, Treasure, Portal };
-
 enum class CombatState { Inactive, Active, Cleared };
 
 struct GateSlot {

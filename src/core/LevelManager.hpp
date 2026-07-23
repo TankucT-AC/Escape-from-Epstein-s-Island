@@ -25,7 +25,7 @@ public:
   void buildFromData(const DungeonData &data, ResourceManager &rm);
 
   template <typename Object> bool checkCollision(const Object &object) const {
-    auto hb = object.getHitbox();
+    sf::Rect<float> hb = object.getHitbox();
     for (const auto &room : m_rooms)
       if (room->checkCollision(object))
         return true;
@@ -42,6 +42,9 @@ public:
 
   std::optional<std::reference_wrapper<Chest>>
   findChestAt(sf::Vector2<float> worldPos);
+
+  /** @brief true, если все боевые комнаты зачищены (можно спавнить портал). */
+  bool allCombatRoomsCleared() const;
 
   const std::vector<std::unique_ptr<Room>> &getRooms() const { return m_rooms; }
 };

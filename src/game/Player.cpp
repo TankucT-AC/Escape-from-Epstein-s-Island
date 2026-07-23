@@ -6,6 +6,8 @@
 #include "src/core/ResourceManager.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <cmath>
+#include <functional>
+#include <optional>
 
 Player::Player(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
                float InitSpeed, float InitShootDelay)
@@ -64,25 +66,24 @@ void Player::update(const sf::Time &dt) {
   m_velocity = offset * m_speed;
   m_animator.update(dt.asSeconds(), moving, sprite);
 
+  bool facingLeft = (m_mousePos.x < sprite.getPosition().x);
+  sprite.setScale(facingLeft ? -config::PLAYER_SCALE : config::PLAYER_SCALE,
+                  config::PLAYER_SCALE);
+}
+
+void Player::syncWeaponTransform() {
   sf::Vector2<float> playerPos = sprite.getPosition();
   sf::Vector2<float> dir = m_mousePos - playerPos;
   auto radians = std::atan2(dir.y, dir.x);
   auto degrees = radians * 180.f / config::PI;
-
   bool facingLeft = (m_mousePos.x < playerPos.x);
-  sprite.setScale(facingLeft ? -config::PLAYER_SCALE : config::PLAYER_SCALE,
-                  config::PLAYER_SCALE);
 
-  // Оружие: rotation всегда равен углу на мышь. При взгляде влево флипаем
-  // спрайт по Y — точка дула (y=0) лежит на оси вращения, поэтому ствол
-  // непрерывно следует за мышью, а переворачивается только тело оружия.
   m_weaponSprite.setPosition(playerPos.x,
                              playerPos.y + config::PLAYER_WEAPON_Y_OFFSET);
   m_weaponSprite.setRotation(degrees);
-  float weaponScaleX = std::abs(m_weaponSprite.getScale().x);
-  float weaponScaleY = std::abs(m_weaponSprite.getScale().y);
-  m_weaponSprite.setScale(weaponScaleX,
-                          facingLeft ? -weaponScaleY : weaponScaleY);
+  float sx = std::abs(m_weaponSprite.getScale().x);
+  float sy = std::abs(m_weaponSprite.getScale().y);
+  m_weaponSprite.setScale(sx, facingLeft ? -sy : sy);
 }
 
 void Player::moveShootTime(const sf::Time &dt) {
@@ -99,18 +100,21 @@ float Player::getLayerY() const {
 sf::FloatRect Player::getHitbox() const {
   auto pos = sprite.getPosition();
   return {pos.x - config::PLAYER_HITBOX_HALF_W,
-          pos.y - config::PLAYER_HITBOX_HALF_H + config::PLAYER_WEAPON_Y_OFFSET,
+          pos.y - config::PLAYER_HITBOX_HALF_H + config::PLAYER_HITBOX_Y_OFFSET,
           config::PLAYER_HITBOX_W, config::PLAYER_HITBOX_H};
 }
 
 // ─── Оружие ───
 
 void Player::updateWeaponSprite(ResourceManager &rm) {
-  if (m_activeWeapon < 0 || m_activeWeapon >= static_cast<int>(m_weapons.size()))
+  if (m_activeWeapon < 0 ||
+      m_activeWeapon >= static_cast<int>(m_weapons.size()))
     return;
   const Weapon *w = m_weapons[m_activeWeapon].get();
   auto &tex = rm.getTexture(w->getWeaponTexPath());
-  m_weaponSprite.setTexture(tex);
+  // resetRect=true — иначе textureRect остаётся от предыдущего оружия
+  // и текстура нового обрезается (размеры пресетов различаются)
+  m_weaponSprite.setTexture(tex, true);
   auto b = m_weaponSprite.getLocalBounds();
   m_weaponSprite.setOrigin(b.width / 2.f, b.height / 2.f);
   float baseScale = w->getWeaponScale();
@@ -142,17 +146,19 @@ std::unique_ptr<Weapon> Player::removeWeapon(int slot) {
   return w;
 }
 
-const Weapon *Player::getActiveWeapon() const {
-  if (m_activeWeapon >= 0 && m_activeWeapon < static_cast<int>(m_weapons.size()))
-    return m_weapons[m_activeWeapon].get();
-  return nullptr;
+const std::optional<std::reference_wrapper<Weapon>>
+Player::getActiveWeapon() const {
+  if (m_activeWeapon >= 0 &&
+      m_activeWeapon < static_cast<int>(m_weapons.size()))
+    return *m_weapons[m_activeWeapon];
+  return std::nullopt;
 }
 
 void Player::handlePlayer(const PlayerInputState &input, ResourceManager &rm,
                           std::vector<std::unique_ptr<Bullet>> &bullets) {
   if (input.wantToShoot && isShootTime()) {
-    const Weapon *w = getActiveWeapon();
-    if (w) {
+    const std::optional<std::reference_wrapper<Weapon>> w = getActiveWeapon();
+    if (w.has_value()) {
       // Дуло: от позиции оружия (а не центра игрока) вдоль направления прицела
       // на половину отмасштабированной ширины спрайта — кончик ствола.
       sf::Vector2<float> weaponPos = {
@@ -168,8 +174,8 @@ void Player::handlePlayer(const PlayerInputState &input, ResourceManager &rm,
 
       // Неконстантный fire (Weapon не может быть const из-за виртуального fire)
       // Кастуем — оружие физически не меняется от fire
-      const_cast<Weapon *>(w)->fire(barrelPos, dir, bullets, rm);
-      m_shootDelay = w->getFireRate();
+      const_cast<Weapon &>(w.value().get()).fire(barrelPos, dir, bullets, rm);
+      m_shootDelay = w.value().get().getFireRate();
       cooldown();
     }
   }

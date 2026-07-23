@@ -7,8 +7,12 @@
 #include "src/game/Entity.hpp"
 
 class Wall : public Entity, public IDrawAble {
+private:
+  bool m_isSortable;
+
 public:
-  Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos);
+  Wall(const sf::Texture &InitTexture, sf::Vector2<float> InitPos,
+       bool isSortable = true);
 
   virtual void update(const sf::Time &dt) override {};
   virtual void draw(sf::RenderWindow &window) const override;

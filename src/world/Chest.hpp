@@ -1,0 +1,41 @@
+// Copyright (C) 2026 Magomed Gadzhiumarov
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef CHEST_HPP
+#define CHEST_HPP
+
+#include "src/game/Entity.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
+/**
+ * @brief Игровой сундук.
+ *
+ * Имеет два состояния: закрыт (Closed) и открыт (Open).
+ * При открытии указывает индекс выпавшего оружия через setWeaponDrop().
+ */
+class Chest : public Entity, public IDrawAble {
+public:
+  enum class State { Closed, Open };
+
+private:
+  State m_state;
+  sf::Texture m_closedTex;
+  sf::Texture m_openTex;
+  int m_weaponDrop = 0; // 0 = ничего, 1-3 = индекс оружия
+
+public:
+  Chest(const sf::Texture &closedTex, const sf::Texture &openTex,
+        sf::Vector2<float> pos);
+
+  void open();
+  bool isOpen() const { return m_state == State::Open; }
+  int getWeaponDrop() const { return m_weaponDrop; }
+  void setWeaponDrop(int idx) { m_weaponDrop = idx; }
+
+  virtual void update(const sf::Time &dt) override {}
+  virtual void draw(sf::RenderWindow &window) const override;
+  virtual float getLayerY() const override;
+};
+
+#endif

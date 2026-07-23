@@ -14,10 +14,15 @@
 
 struct PlayerInputState {
   bool wantToShoot = false;
+  bool wantToInteract = false;
+  int weaponSlot = -1; // -1 = бездействие, 0/1/2 = Num1/Num2/Num3
   sf::Vector2<float> mousePos;
 };
 
 class InputManager {
+private:
+  bool m_prevRightButton = false;
+
 public:
   void pollEvents(sf::RenderWindow &window, sf::Event &event, sf::View &camera);
   PlayerInputState getPlayerInput(sf::RenderWindow &window, Player &player,

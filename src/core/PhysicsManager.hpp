@@ -9,7 +9,7 @@
 #include <vector>
 
 class Player;
-class Room;
+class LevelManager;
 class Enemy;
 class Bullet;
 
@@ -17,12 +17,24 @@ class PhysicsManager {
 public:
   void handleCollisions(std::vector<std::unique_ptr<Bullet>> &bullets,
                         std::vector<std::unique_ptr<Enemy>> &enemies,
-                        Room &room);
+                        LevelManager &levelManager);
 
   void cleanup(std::vector<std::unique_ptr<Bullet>> &bullets,
-               std::vector<std::unique_ptr<Enemy>> &enemies, Room &room);
+               std::vector<std::unique_ptr<Enemy>> &enemies,
+               LevelManager &levelManager);
 
-  void checkCollisions(const sf::Time &dt, Player &player, Room &room);
+  void handleCollisions(const sf::Time &dt, Player &player,
+                        LevelManager &levelManager);
+
+  /**
+   * @brief Двигает всех врагов и разрешает коллизии со стенами.
+   * @param dt Дельта времени.
+   * @param enemies Вектор врагов (изменяются позиции).
+   * @param levelManager Менеджер уровня для проверки коллизий.
+   */
+  static void moveEnemies(const sf::Time &dt,
+                          std::vector<std::unique_ptr<Enemy>> &enemies,
+                          LevelManager &levelManager);
 };
 
 #endif // PHYSICS_MANAGER_HPP

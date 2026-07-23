@@ -4,81 +4,96 @@
 #ifndef DUNGEON_GENERATOR_HPP
 #define DUNGEON_GENERATOR_HPP
 
-#include "Room.hpp"
-#include "src/world/BSPTree.hpp"
+#include <SFML/System/Vector2.hpp>
+#include <cstdint>
+#include <random>
+#include <string>
+#include <utility>
+#include <vector>
+
+enum class Tile : char {
+  Wall = '#',
+  Floor = '.',
+  Door = '+',
+  Cover = 'O',
+  EnemySpawn = 'x',
+  PlayerSpawn = '@',
+  Barrel = '!',
+  VendingMachine = 'V',
+  Chest = 'C',
+  Forge = 'F',
+};
+
+struct Cell {
+  int x = 0;
+  int y = 0;
+  bool active = false;
+  bool connectUp = false;
+  bool connectDown = false;
+  bool connectLeft = false;
+  bool connectRight = false;
+  uint8_t prefabIndex = 0;
+};
+
+struct DungeonConfig {
+  int gridWidth = 5;
+  int gridHeight = 4;
+  int walkSteps = 6;
+  int corridorLength = 6;
+  int corridorWidth = 3;
+  int prefabSize = 13;
+  unsigned int seed = 0;
+};
+
+// Данные для размещения одной комнаты
+struct RoomPlacement {
+  uint8_t prefabIndex = 0;
+  int tileX = 0;
+  int tileY = 0;
+  bool connectUp = false;
+  bool connectDown = false;
+  bool connectLeft = false;
+  bool connectRight = false;
+};
+
+// Данные для размещения одного коридора
+struct CorridorPlacement {
+  bool isHorizontal = true;
+  int tileX = 0;
+  int tileY = 0;
+  int width = 0;  // полная ширина в тайлах (включая стенки)
+  int height = 0; // полная высота в тайлах (включая стенки)
+};
 
 struct DungeonData {
-  MapData::RoomGrid grid;
+  std::vector<RoomPlacement> rooms;
+  std::vector<CorridorPlacement> corridors;
   sf::Vector2<float> playerSpawnPoint;
+  int corridorWidth = 3;
 };
 
 class DungeonGenerator {
-private:
-  std::unique_ptr<BSPNode> m_root;
-  std::mt19937 m_rng;
-
-  void branchWorkspace(std::unique_ptr<BSPNode> &node, int currentDepth,
-                       int maxDepth, int minSize) {
-    if (!node || currentDepth >= maxDepth)
-      return;
-    if (node->split(minSize, m_rng)) {
-      branchWorkspace(node->leftChild, currentDepth + 1, maxDepth, minSize);
-      branchWorkspace(node->rightChild, currentDepth + 1, maxDepth, minSize);
-    }
-  }
-
 public:
-  DungeonGenerator() {
-    std::random_device rd;
-    m_rng.seed(rd());
-  }
+  explicit DungeonGenerator(const DungeonConfig &config);
 
-  DungeonData generateDungeon(int width, int height, int maxDepth,
-                              int minNodeSize, int minRoomSize) {
-    m_root = std::make_unique<BSPNode>(sf::IntRect(0, 0, width, height));
-    branchWorkspace(m_root, 0, maxDepth, minNodeSize);
+  DungeonData generate();
+  void reseed() { m_config.seed = std::random_device{}(); }
 
-    MapData::RoomGrid grid(height, std::vector<int>(width, 0));
+  const std::vector<Cell> &getCells() const { return m_cells; }
 
-    sf::Vector2<int> spawnTile = m_root->carve(grid, minRoomSize, m_rng);
+  static DungeonConfig defaultConfig();
 
-    // ПОСТ-ПРОЦЕССИНГ СТЕН
-    int dx[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
-    int dy[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
-    for (int y = 0; y < height; ++y) {
-      for (int x = 0; x < width; ++x) {
-        if (grid[y][x] == static_cast<int>(RoomElements::TEMP_FLAG)) {
-          for (int i = 0; i < 9; ++i) {
-            int curr_x = x + dx[i];
-            int curr_y = y + dy[i];
-            if (curr_x >= 0 && curr_x < width && curr_y >= 0 &&
-                curr_y < height &&
-                grid[curr_y][curr_x] == static_cast<int>(RoomElements::FLOOR)) {
-              grid[curr_y][curr_x] = static_cast<int>(RoomElements::WALL);
-            }
-          }
-        }
-      }
-    }
+private:
+  DungeonConfig m_config;
+  std::vector<Cell> m_cells;
+  std::vector<std::pair<int, int>> m_walkPath;
+  std::vector<std::string> m_prefabs;
 
-    // Очистка временных маркеров пола (превращаем 2 в 0)
-    for (int y = 0; y < height; ++y) {
-      for (int x = 0; x < width; ++x) {
-        if (grid[y][x] == 2)
-          grid[y][x] = static_cast<int>(RoomElements::FLOOR);
-      }
-    }
-
-    // Конвертируем тайлы в пиксели.
-    // Добавляем +0.5f, чтобы персонаж встал ровно в центр тайла, а не на его
-    // верхний левый угол
-    sf::Vector2<float> pixelSpawn(
-        (static_cast<float>(spawnTile.x) + 0.5f) * config::TILE_SIZE,
-        (static_cast<float>(spawnTile.y) + 0.5f) * config::TILE_SIZE);
-
-    // Возвращаем структуру с сеткой и точкой спавна
-    return {grid, pixelSpawn};
-  }
+  void initPrefabs();
+  void randomWalk(unsigned int seed);
+  void resolveConnections();
+  void assembleData(DungeonData &data);
+  int cellIndex(int x, int y) const;
 };
 
 #endif
